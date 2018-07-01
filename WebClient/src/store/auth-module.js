@@ -36,8 +36,6 @@ const actions = {
             AuthService.login(credentials).then((data) => {
                 commit(SET_AUTH, data)
                 resolve(data)
-            }).catch((error) => {
-                console.log('Error: ' + error)
             })
         })
     },

@@ -5,7 +5,6 @@ import App from './App'
 import router from './router'
 import Vuetify from 'vuetify'
 import Notifications from 'vue-notification'
-import VueMoment from 'vue-moment'
 import { sync } from 'vuex-router-sync'
 import store from '@/store'
 import ApiService from '@/services/api-service'
@@ -15,7 +14,6 @@ Vue.config.productionTip = false
 
 Vue.use(Vuetify)
 Vue.use(Notifications)
-Vue.use(VueMoment)
 sync(store, router)
 
 ApiService.init()

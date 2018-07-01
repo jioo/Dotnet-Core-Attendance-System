@@ -12,21 +12,6 @@ namespace WebApi.Infrastructures
         {
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            // modelBuilder.Entity<Employee>()
-            //     .Property(b => b.Created)
-            //     .ValueGeneratedOnAdd()
-            //     .HasDefaultValueSql("GETUTCDATE()");
-
-            // modelBuilder.Entity<Employee>()
-            //     .Property(b => b.Updated)
-            //     .ValueGeneratedOnUpdate()
-            //     .HasDefaultValueSql("GETUTCDATE()");
-
-            base.OnModelCreating(modelBuilder);
-        }
-
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Log> Logs { get; set; }
 

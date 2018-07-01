@@ -3,19 +3,18 @@
         <v-toolbar app fixed clipped-left>
             <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
             <v-toolbar-title>BDF ATTENDANCE SYSTEM</v-toolbar-title>
+            <v-spacer></v-spacer>
         </v-toolbar>
+        
         <v-navigation-drawer v-model="drawer" clipped fixed app>
             <v-list dense>
-                <v-subheader class="mt-3 grey--text text--darken-1">MAIN NAVIGATION</v-subheader>
-                <!-- <v-list-tile v-for="(item, i) in items" :key="i" exact :to="{ name: item.to }"
-                    v-ripple active-class="orange--text" v-if="item.visible">
-                    <v-list-tile-action>
-                        <v-icon v-html="item.icon"></v-icon>
-                    </v-list-tile-action>
+                <v-list-tile v-if="isAuthenticated">
                     <v-list-tile-content>
-                        <v-list-tile-title v-text="item.title"></v-list-tile-title>
+                        <v-list-tile-title>Logged in as <b class="orange--text"> {{ currentUser.user.fullName }}</b></v-list-tile-title>
                     </v-list-tile-content>
-                </v-list-tile> -->
+                </v-list-tile>
+
+                <v-subheader class="mt-3 grey--text text--darken-1">MAIN NAVIGATION</v-subheader>
 
                 <v-list-tile exact :to="{ name: 'home' }" v-if="!isAuthenticated"
                 v-ripple active-class="orange--text" >
@@ -27,17 +26,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile exact :to="{ name: 'login' }" v-if="!isAuthenticated"
-                v-ripple active-class="orange--text" >
-                    <v-list-tile-action>
-                        <v-icon>account_circle</v-icon>
-                    </v-list-tile-action>
-                    <v-list-tile-content>
-                        <v-list-tile-title>Login</v-list-tile-title>
-                    </v-list-tile-content>
-                </v-list-tile>
-
-                <v-list-tile exact :to="{ name: 'employees' }" v-if="isAuthenticated"
+                <v-list-tile exact :to="{ name: 'employees' }" v-if="isAuthenticated && isRole('Admin')"
                 v-ripple active-class="orange--text" >
                     <v-list-tile-action>
                         <v-icon>supervisor_account</v-icon>
@@ -54,6 +43,28 @@
                     </v-list-tile-action>
                     <v-list-tile-content>
                         <v-list-tile-title>Logs</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+
+                <v-subheader class="mt-3 grey--text text--darken-1">ACCOUNT</v-subheader>
+
+                <v-list-tile exact :to="{ name: 'login' }" v-if="!isAuthenticated"
+                v-ripple active-class="orange--text" >
+                    <v-list-tile-action>
+                        <v-icon>account_circle</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                        <v-list-tile-title>Login</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+
+                <v-list-tile exact :to="{ name: 'change-password' }" v-if="isAuthenticated"
+                v-ripple active-class="orange--text" >
+                    <v-list-tile-action>
+                        <v-icon>settings</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                        <v-list-tile-title>Change Password</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
@@ -74,11 +85,12 @@
 <script>
 import { mapGetters } from "vuex";
 import { LOGOUT } from '@/store/actions-type'
+import { EventBus } from '@/event-bus.js'
 
 export default {
     data() {
         return {
-            drawer: true,
+            drawer: false,
             items: [
                 { icon: "home", title: "Home", to: "home", visible: true },
                 { icon: "supervisor_account", title: "Login", to: "login", visible: !this.isAuthenticated }
@@ -87,7 +99,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(["isAuthenticated"])
+        ...mapGetters(["isAuthenticated", "currentUser"])
     },
 
     methods: {
@@ -95,7 +107,19 @@ export default {
             this.$store.dispatch(LOGOUT).then(() => {
                 this.$router.push({ name: 'home' })
             })
+        },
+        isRole(param) {
+            if(!this.currentUser) return
+
+            let check = this.currentUser.user.roles
+            return check.includes(param)
         }
+    },
+
+    created () {
+        EventBus.$on('toggle-drawer', () => {
+            this.drawer = false
+        })
     }
 }
 </script>

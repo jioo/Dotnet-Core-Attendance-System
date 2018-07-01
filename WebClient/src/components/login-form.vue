@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import { LOGIN } from '@/store/actions-type'
 
 export default {
@@ -35,12 +36,22 @@ export default {
         }
     },
 
+    computed: {
+        ...mapGetters(["currentUser"])
+    },
+
     methods: {
         loginUser () {
             if (this.$refs.form.validate()) {
                 this.$store.dispatch(LOGIN, JSON.stringify(this.form)).then((res) => {
                     this.$notify({ type: 'success', text: 'Login success!' })
-                    this.$router.push({ name: 'employees' })
+                    
+                    let checkRole = this.currentUser.user.roles
+                    if(checkRole.includes('Admin')) {
+                        this.$router.push({ name: 'employees' })
+                    } else {
+                        this.$router.push({ name: 'logs' })
+                    }
                 })
             }
         }

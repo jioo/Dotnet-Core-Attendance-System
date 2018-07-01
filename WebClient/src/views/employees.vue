@@ -3,8 +3,8 @@
         <v-layout align-center justify-center>
             <v-flex md12>
                 <employee-create />
-                <employee-edit ref='employeeEdit' />
-                <employee-list :employees="employees" v-on:on-edit="openEditDialog" />
+                <employee-edit />
+                <employee-list :employees="employees" />
             </v-flex>
         </v-layout>
     </v-container>
@@ -31,9 +31,6 @@ export default {
     methods: {
         initialize () {
             this.$store.dispatch(FETCH_EMPLOYEES)
-        },
-        openEditDialog (params) {
-            this.$refs.employeeEdit.openEditDialog(params);
         }
     },
 

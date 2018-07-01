@@ -21,7 +21,7 @@ namespace WebApi.Controllers
     {
         private JsonSerializerSettings settings = new JsonSerializerSettings { Formatting = Formatting.Indented, ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
         private readonly ILogService _service;
-        
+
         public LogController(ILogService service)
         {
             _service = service;
@@ -32,7 +32,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> Index()
         {
             var res = await _service.GetAllAsync();
-            return new OkObjectResult( JsonConvert.SerializeObject(res, settings) );
+            return new OkObjectResult(JsonConvert.SerializeObject(res, settings));
         }
 
         // POST api/log
@@ -40,30 +40,30 @@ namespace WebApi.Controllers
         public async Task<IActionResult> Log([FromBody] LogInOutViewModel model)
         {
             var user = await _service.CheckCardNo(model);
-            if(user.Id == Guid.Empty)
+            if (user.Id == Guid.Empty)
             {
                 return BadRequest("Invalid username or password!");
             }
-            
+
             var res = await _service.Log(user);
-            return new OkObjectResult( JsonConvert.SerializeObject(res, settings) );
+            return new OkObjectResult(JsonConvert.SerializeObject(res, settings));
         }
 
         // PUT api/log
         [HttpPut]
         public async Task<IActionResult> Update([FromBody]LogEditViewModel model)
         {
-            try 
+            try
             {
-                if(!ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
-                    return BadRequest("Invalid Model!");
+                    return BadRequest("Invalid Request!");
                 }
 
                 var res = await _service.UpdateAsync(model);
-                return new OkObjectResult( JsonConvert.SerializeObject(res, settings) );
+                return new OkObjectResult(JsonConvert.SerializeObject(res, settings));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }

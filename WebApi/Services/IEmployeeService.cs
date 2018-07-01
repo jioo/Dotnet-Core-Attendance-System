@@ -10,8 +10,9 @@ namespace WebApi.Services
     {
         Task<IList<Employee>> GetAllAsync();
         Task<Employee> FindAsync(Guid id);
+        Task<Employee> GetEmployeeByUserId(string id);
         Task AddAsync(Employee emp);
-        Task UpdateAsync(EmployeeViewModel emp);
+        Task<Employee> UpdateAsync(EmployeeViewModel emp);
         Task<bool> isCardExist(Guid id, string cardNo);
     }
 

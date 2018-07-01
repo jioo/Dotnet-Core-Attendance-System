@@ -1,6 +1,8 @@
 import Vue from 'vue'
+import store from '@/store'
 import axios from 'axios'
 import JwtService from './jwt-service'
+import { LOADING_START, LOADING_END } from '@/store/actions-type'
 
 const ApiService = {
     init () {
@@ -17,39 +19,51 @@ const ApiService = {
 
         // Add a response interceptor
         axios.interceptors.response.use((response) => {
-            // always retorn data in response
+            store.commit(LOADING_END)
+            // always retorn data in response   
             return response.data;
-        }, error => Promise.reject(error))
+        }, error => {
+            store.commit(LOADING_END)
+            return Promise.reject(error)
+        })
     },
 
     query (resource) {
-        return axios.get(resource).catch((error) => {
-            throw new Error(`ApiService ${error}`)
-        })
+        store.commit(LOADING_START)
+        return axios.get(resource)
     },
 
     get (resource, id) {
-        return axios.get(`${resource}/${id}`).catch((error) => {
-            throw new Error(`ApiService ${error}`)
-        })
+        store.commit(LOADING_START)
+        return axios.get(`${resource}/${id}`)
     },
 
     post (resource, payload) {
+        store.commit(LOADING_START)
         return new Promise((resolve, reject) => {
             axios.post(resource, payload).then((res) => {
                 resolve(res) 
             }).catch((error) => {
-                reject(error.response.data)
+                Vue.prototype.$notify({
+                    type: 'error',
+                    text: error.response.data,
+                })
             })
         })
+
+        
     },
 
     put (resource, payload) {
+        store.commit(LOADING_START)
         return new Promise((resolve, reject) => {
             axios.put(resource, payload).then((res) => {
                 resolve(res) 
             }).catch((error) => {
-                reject(error.response.data)
+                Vue.prototype.$notify({
+                    type: 'error',
+                    text: error.response.data,
+                })
             })
         })
     },

@@ -32,15 +32,19 @@ const actions = {
         })
     },
     [FETCH_EMPLOYEE] ({state}, id) {
-        return this.state.articles.find(a => a.id == id)
+        return new Promise((resolve, reject) => {
+            EmployeeService.get(id).then((res) => {
+                resolve(res)
+            }).catch((err) => {
+                reject(err)
+            })
+        })
     },
     [EMPLOYEE_CREATE] ({commit}, payload) {
         return new Promise((resolve, reject) => {
             EmployeeService.post(payload).then((response) => {
                 commit(SET_EMPLOYEE, response)
                 resolve()
-            }).catch((err) => {
-                reject(err)
             })
         })
     },

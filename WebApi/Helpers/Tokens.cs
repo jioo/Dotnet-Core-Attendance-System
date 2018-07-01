@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -13,6 +14,8 @@ namespace WebApi.Helpers
         public static async Task<string> GenerateJwt(
             ClaimsIdentity identity,
             IJwtService jwtService,
+            Guid empId,
+            string fullName,
             string userName,
             JwtIssuerOptions jwtOptions
             )
@@ -22,6 +25,8 @@ namespace WebApi.Helpers
             {
                 user = new
                 {
+                    empId = (empId != Guid.Empty) ? empId: Guid.Empty,
+                    fullName = fullName,
                     username = userName,
                     roles = identity.Claims.Where(c => c.Type == ClaimTypes.Role)
                                 .Select(c => c.Value)

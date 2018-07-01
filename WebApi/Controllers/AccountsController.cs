@@ -42,10 +42,10 @@ namespace WebApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest("Invalid Model!");
+                return BadRequest("Invalid Request!");
             }
 
-            if(await _service.isCardExist(Guid.Empty, model.CardNo))
+            if (await _service.isCardExist(Guid.Empty, model.CardNo))
             {
                 return BadRequest("Card No. is already in use");
             }
@@ -55,7 +55,7 @@ namespace WebApi.Controllers
             var result = await _manager.CreateAsync(user, model.Password);
             await _manager.AddToRoleAsync(user, "Employee");
 
-            if (!result.Succeeded) return new BadRequestObjectResult("Username \'" +model.UserName+ "\' is already taken");
+            if (!result.Succeeded) return new BadRequestObjectResult("Username \'" + model.UserName + "\' is already taken");
 
             try
             {
@@ -71,12 +71,32 @@ namespace WebApi.Controllers
 
                 _repo.Context.Insert(emp);
                 await _repo.SaveAsync();
-                return new OkObjectResult( JsonConvert.SerializeObject(emp, new JsonSerializerSettings { Formatting = Formatting.Indented }) );
+                return new OkObjectResult(JsonConvert.SerializeObject(emp, new JsonSerializerSettings { Formatting = Formatting.Indented }));
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+        }
+
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request!");
+            }
+
+            var user = await _manager.FindByNameAsync(model.UserName);
+            var result = await _manager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest("Incorrect password");
+            }
+
+            return Ok();
         }
     }
 }

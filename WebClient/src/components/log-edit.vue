@@ -1,6 +1,7 @@
 <template>
     <v-dialog v-model="dialog" persistent max-width="500px">
         <v-card>
+            <v-progress-linear indeterminate v-if="isLoading"></v-progress-linear>
             <v-card-title>
                 <span class="title">Edit Log</span>
             </v-card-title>
@@ -17,7 +18,7 @@
                                 transition="scale-transition">
                                 <v-text-field
                                     slot="activator"
-                                    v-model="computedInDate"
+                                    :value="computedInDate"
                                     readonly
                                     label="Time In"
                                 ></v-text-field>
@@ -31,7 +32,7 @@
                                 transition="scale-transition">
                                 <v-text-field
                                     slot="activator"
-                                    v-model="computedTimeIn"
+                                    :value="computedTimeIn"
                                     readonly></v-text-field>
                                 <v-time-picker v-model="inTime" @change="$refs.inTime.save(inTime)"></v-time-picker>
                             </v-menu>
@@ -45,7 +46,7 @@
                                 transition="scale-transition">
                                 <v-text-field
                                     slot="activator"
-                                    v-model="computedOutDate"
+                                    :value="computedOutDate"
                                     readonly
                                     label="Time out"></v-text-field>
                                 <v-date-picker v-model="outDate" no-title @input="$refs.outDate.save(outDate)"></v-date-picker>
@@ -58,7 +59,7 @@
                                 transition="scale-transition">
                                 <v-text-field
                                     slot="activator"
-                                    v-model="computedOutTime"
+                                    :value="computedOutTime"
                                     readonly
                                     ></v-text-field>
                                 <v-time-picker v-model="outTime" @change="$refs.outTime.save(outTime)"></v-time-picker>
@@ -79,15 +80,17 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="error" @click.native="dialog = false">Cancel</v-btn>
-                <v-btn color="success" @click="edit">Update</v-btn>
+                <v-btn color="error" :loading="isLoading" @click.native="dialog = false">Cancel</v-btn>
+                <v-btn color="success" :loading="isLoading" @click="edit">Update</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { LOG_EDIT } from '@/store/actions-type'
+import { EventBus } from '@/event-bus.js'
 import moment from 'moment'
 
 export default {
@@ -104,6 +107,8 @@ export default {
     },
  
     computed: {
+        ...mapGetters(["isLoading"]),
+
         computedInDate () {
             return this.format('date', this.inDate)
         },
@@ -139,7 +144,9 @@ export default {
         },
         edit () {
             this.form.TimeIn = this.computedInDate + ' ' + this.computedTimeIn
-            this.form.TimeOut = (!this.toggleTimeOut) ? this.computedOutDate + ' ' + this.computedOutTime : ''
+            this.form.TimeOut = (!this.toggleTimeOut && this.computedOutDate && this.computedOutTime) 
+                ? this.computedOutDate + ' ' + this.computedOutTime 
+                : ''
             
             this.$store.dispatch(LOG_EDIT, JSON.stringify(this.form)).then(() => {
                 this.$refs.form.reset()
@@ -174,6 +181,12 @@ export default {
             this.outDate = this.format('date', outDate, false)
             this.outTime =  this.format('time', outTime, false)
         }
+    },
+
+    mounted () {
+        EventBus.$on('log-edit', (params) => {
+            this.openEditDialog(params)
+        })
     }
 }
 </script>

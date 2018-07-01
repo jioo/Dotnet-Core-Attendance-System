@@ -1,25 +1,20 @@
 <template>
     <v-container fluid fill-height>
         <v-layout align-center justify-center>
-            <v-flex md12>
-                <log-edit />
-                <log-list />
+            <v-flex xs12 sm8 md4>
+                <change-password />
             </v-flex>
         </v-layout>
     </v-container>
 </template>
 
 <script>
-import LogList from '@/components/log-list'
-import LogEdit from '@/components/log-edit'
+import ChangePassword from '@/components/change-password'
 
 export default {
     components: {
-        LogList,
-        LogEdit
-    },
+        ChangePassword
+    }
 }
 </script>
-
-
 

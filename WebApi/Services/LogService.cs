@@ -82,6 +82,11 @@ namespace WebApi.Services
                     .Where(m => m.Status == Status.Active)
                     .Where(m => m.Deleted == null)
                     .SingleOrDefaultAsync();
+                    
+                if(emp == null) 
+                {
+                    return new Employee{ Id = Guid.Empty };
+                }
 
                 var user = await _manager.FindByIdAsync(emp.IdentityId);
                 if (await _manager.CheckPasswordAsync(user, model.Password))

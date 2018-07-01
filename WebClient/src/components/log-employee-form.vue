@@ -4,35 +4,41 @@
             <v-toolbar-title>Employee Log</v-toolbar-title>
             <v-spacer></v-spacer>
         </v-toolbar>
+
         <v-card-text>
         <v-form v-model="valid" ref="form">
-            <v-text-field prepend-icon="person" label="CardNo" type="text" autofocus color="orange"
-            v-model="form.cardno" required :rules="[required]"></v-text-field>
+            <v-text-field prepend-icon="person" label="CardNo" type="text" color="orange" ref="cardNo" autofocus
+            v-model="form.cardno" required :rules="[required]" v-on:keyup.enter="$refs.password.focus()"></v-text-field>
             
-            <v-text-field prepend-icon="lock" label="Password" type="password" color="orange"
-            v-model="form.password" required :rules="[required]"></v-text-field>
+            <v-text-field prepend-icon="lock" label="Password" type="password" color="orange" ref="password"
+            v-model="form.password" required :rules="[required]" v-on:keyup.enter="logEmp()"></v-text-field>
         </v-form>
         </v-card-text>
-        <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="orange" @click="logEmp">Login</v-btn>
+        <v-card-actions>    
+            <v-spacer></v-spacer>   
+            <v-btn color="orange" :loading="isLoading" @click="logEmp">Login</v-btn>
         </v-card-actions>
     </v-card>
 </template>
 
 <script>
 import { LOG_EMPLOYEE } from '@/store/actions-type'
+import { mapGetters } from 'vuex'
 
 export default {
     data () {
         return {
             valid: false,
             form: {
-                cardno: '123456',
-                password: '123456'
+                cardno: '',
+                password: ''
             },
             required: (value) => !!value || 'This field is required.'
         }
+    },
+
+    computed: {
+        ...mapGetters(["isLoading"])
     },
 
     methods: {
@@ -40,6 +46,7 @@ export default {
             if (this.$refs.form.validate()) {
                 this.$store.dispatch(LOG_EMPLOYEE, JSON.stringify(this.form)).then((res) => {
                     this.resetForm()
+                    this.$refs.cardNo.focus()
                     const notifDuration = 4000
                     if (res.TimeOut === '' ) {
                         this.$notify({ type: 'success', text: 'Welcome '+ res.FullName+ '!<br /> Time in: ' + res.TimeIn, duration: notifDuration })

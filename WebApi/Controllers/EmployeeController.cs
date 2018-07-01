@@ -49,7 +49,7 @@ namespace WebApi.Controllers
         {
             if(!ModelState.IsValid)
             {
-                return BadRequest("Invalid Model!");
+                return BadRequest("Invalid Request!");
             }
 
             if(await _service.isCardExist(model.Id, model.CardNo))
@@ -57,8 +57,8 @@ namespace WebApi.Controllers
                 return BadRequest("Card No. is already in use");
             }
 
-            await _service.UpdateAsync(model);
-            return new OkObjectResult("Updated!");
+            var res = await _service.UpdateAsync(model);
+            return new OkObjectResult( JsonConvert.SerializeObject(res, settings) );
         }
     }
 }

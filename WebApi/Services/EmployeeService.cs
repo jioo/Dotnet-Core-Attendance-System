@@ -50,6 +50,15 @@ namespace WebApi.Services
             return (res > 0) ? true: false;
         }
 
+        public async Task<Employee> GetEmployeeByUserId(string id)
+        {
+            var result = await _repo.Context.Query()
+                .Where(m => m.IdentityId == id)
+                .FirstOrDefaultAsync();
+
+            return (result != null) ? result :  new Employee{ FullName = "Administrator" };
+        }
+
         public async Task AddAsync(Employee emp)
         {
             try
@@ -63,7 +72,7 @@ namespace WebApi.Services
             }
         }
 
-        public async Task UpdateAsync(EmployeeViewModel model)
+        public async Task<Employee> UpdateAsync(EmployeeViewModel model)
         {
             try
             {
@@ -73,6 +82,8 @@ namespace WebApi.Services
 
                 _repo.Context.Update(oldModel);
                 await _repo.SaveAsync();
+
+                return await FindAsync(oldModel.Id);
             }
             catch (Exception ex)
             {
