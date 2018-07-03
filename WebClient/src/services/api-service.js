@@ -2,11 +2,12 @@ import Vue from 'vue'
 import store from '@/store'
 import axios from 'axios'
 import JwtService from './jwt-service'
+import { BASE_URL } from '@/config.js'
 import { LOADING_START, LOADING_END } from '@/store/actions-type'
 
 const ApiService = {
     init () {
-        axios.defaults.baseURL = 'http://localhost:5000/api/'
+        axios.defaults.baseURL = BASE_URL
 
         // Add a request interceptor
         axios.interceptors.request.use((config) => {
