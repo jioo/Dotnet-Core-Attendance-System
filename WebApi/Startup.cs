@@ -44,8 +44,7 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // string SecretKey = Configuration["AppSecret"];
-            string SecretKey = "141FE29A91D7FA1A13F3C713BB789";
+            string SecretKey = Configuration["AppSecret"];
             SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
 
             // Add framework services.
