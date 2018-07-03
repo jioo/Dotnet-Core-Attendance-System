@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Collections.Generic;
@@ -43,7 +44,8 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string SecretKey = Configuration["AppSecret"];
+            // string SecretKey = Configuration["AppSecret"];
+            string SecretKey = "141FE29A91D7FA1A13F3C713BB789";
             SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
 
             // Add framework services.
@@ -160,7 +162,7 @@ namespace WebApi
             }
             else
             {
-                app.UseHsts();
+                // app.UseHsts();
             }
 
             app.UseExceptionHandler(
@@ -186,10 +188,21 @@ namespace WebApi
                         .AllowAnyMethod()
                         .AllowCredentials()
                 );
-
-            // app.UseHttpsRedirection();
+            
             app.UseAuthentication();
             app.UseMvc();
+            app.Use(async (context, next) => 
+            { 
+                await next(); 
+                if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value)) 
+                { 
+                    context.Request.Path = "/index.html"; 
+                    await next(); 
+                } 
+            }); 
+
+            app.UseDefaultFiles(); 
+            app.UseStaticFiles();
 
             CreateUsersAndRoles(services).Wait();
             AttendanceConfiguration(services).Wait();
