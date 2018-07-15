@@ -24,6 +24,9 @@
 <script>
 import { LOG_EMPLOYEE } from '@/store/actions-type'
 import { mapGetters } from 'vuex'
+// import { HubConnection } from '@aspnet/signalr'
+import * as signalR from "@aspnet/signalr";
+
 
 export default {
     data () {
@@ -59,6 +62,18 @@ export default {
         resetForm () {
             this.$refs.form.reset()
         }
+    },
+
+    mounted () {
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("http://localhost:5000/broadcast")
+            .build();
+
+        connection.on("send", (data) => {
+            console.log(data)
+        })
+
+        connection.start().catch(err => document.write(err));
     }
 }
 </script>
