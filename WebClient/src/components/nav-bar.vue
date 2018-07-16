@@ -90,7 +90,7 @@ import { EventBus } from '@/event-bus.js'
 export default {
     data() {
         return {
-            drawer: false,
+            drawer: true,
             items: [
                 { icon: "home", title: "Home", to: "home", visible: true },
                 { icon: "supervisor_account", title: "Login", to: "login", visible: !this.isAuthenticated }

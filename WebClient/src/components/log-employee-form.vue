@@ -22,8 +22,9 @@
 </template>
 
 <script>
-import { LOG_EMPLOYEE } from '@/store/actions-type'
 import { mapGetters } from 'vuex'
+import { LOG_EMPLOYEE } from '@/store/actions-type'
+import { EventBus } from '@/event-bus.js'
 
 export default {
     data () {
@@ -59,6 +60,10 @@ export default {
         resetForm () {
             this.$refs.form.reset()
         }
+    },
+
+    created () {
+        EventBus.$emit('toggle-drawer')
     }
 }
 </script>
