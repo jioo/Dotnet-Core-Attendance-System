@@ -25,6 +25,7 @@
 import { mapGetters } from 'vuex'
 import { LOG_EMPLOYEE } from '@/store/actions-type'
 import { EventBus } from '@/event-bus.js'
+import * as signalR from "@aspnet/signalr";
 
 export default {
     data () {
@@ -64,6 +65,18 @@ export default {
 
     created () {
         EventBus.$emit('toggle-drawer')
+    },
+
+    mounted () {
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("http://localhost:5000/broadcast")
+            .build();
+
+        connection.on("send", (data) => {
+            console.log(data)
+        })
+
+        connection.start().catch(err => document.write(err));
     }
 }
 </script>

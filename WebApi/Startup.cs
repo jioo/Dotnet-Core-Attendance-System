@@ -29,6 +29,7 @@ using WebApi.Entities;
 using WebApi.Services;
 using WebApi.Repositories;
 using WebApi.Helpers;
+using Hubs.BroadcastHub;
 
 namespace WebApi
 {
@@ -127,6 +128,7 @@ namespace WebApi
             
             services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
             services.AddCors();
+            services.AddSignalR();
 
             services.AddSwaggerGen(c =>
             {
@@ -202,6 +204,11 @@ namespace WebApi
 
             app.UseDefaultFiles(); 
             app.UseStaticFiles();
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<BroadcastHub>("/broadcast");
+            });
 
             CreateUsersAndRoles(services).Wait();
             AttendanceConfiguration(services).Wait();
