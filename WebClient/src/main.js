@@ -9,6 +9,7 @@ import { sync } from 'vuex-router-sync'
 import store from '@/store'
 import ApiService from '@/services/api-service'
 import 'vuetify/dist/vuetify.min.css'
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
 Vue.config.productionTip = false
 

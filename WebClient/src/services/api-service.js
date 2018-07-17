@@ -7,7 +7,7 @@ import { LOADING_START, LOADING_END } from '@/store/actions-type'
 
 const ApiService = {
     init () {
-        axios.defaults.baseURL = BASE_URL
+        axios.defaults.baseURL = BASE_URL + 'api/'
 
         // Add a request interceptor
         axios.interceptors.request.use((config) => {
