@@ -38,6 +38,7 @@
 import { mapGetters } from "vuex";
 import { FETCH_LOGS } from '@/store/actions-type'
 import { EventBus } from '@/event-bus.js'
+import BroadcastConnection from '@/services/broadcast-service'
 import moment from 'moment'
 
 export default {
@@ -148,6 +149,10 @@ export default {
     async mounted () {
         await this.initialize()
         this.initSettings()
+
+        BroadcastConnection.on("employee-logged", () => {
+            this.initialize()
+        })
     }
 }
 </script>

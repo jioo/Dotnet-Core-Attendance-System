@@ -5,9 +5,9 @@ namespace Hubs.BroadcastHub
 {
     public class BroadcastHub : Hub
     {
-        public async Task SendMessage(string message)
+        public async Task SendMessage()
         {
-            await Clients.All.SendAsync("send", message);
+            await Clients.All.SendAsync("employee-logged");
         }
     }
 }

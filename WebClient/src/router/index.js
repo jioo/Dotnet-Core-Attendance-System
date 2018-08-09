@@ -2,7 +2,6 @@ import Vue from 'vue'
 import store from '@/store'
 import Router from 'vue-router'
 import AuthService from '@/services/auth-service.js'
-import { EventBus } from '@/event-bus.js'
 import { LOGOUT } from '@/store/actions-type'
 
 Vue.use(Router)
@@ -13,11 +12,7 @@ const router = new Router({
         {
             path: '/',
             name: 'home',
-            component: () => import('@/views/home'),
-            beforeEnter: (to, from, next) => {
-                EventBus.$emit('toggle-drawer')
-                next()
-            }
+            component: () => import('@/views/home')
         },
         {
             path: '/login',

@@ -12,6 +12,8 @@ using WebApi.Entities;
 using WebApi.ViewModels;
 using WebApi.Helpers;
 using WebApi.Services;
+using Microsoft.AspNetCore.SignalR;
+using Hubs.BroadcastHub;
 
 namespace WebApi.Controllers
 {
@@ -22,10 +24,12 @@ namespace WebApi.Controllers
     {
         private JsonSerializerSettings settings = new JsonSerializerSettings { Formatting = Formatting.Indented, ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
         private readonly ILogService _service;
+        private readonly IHubContext<BroadcastHub> _hubContext;
 
-        public LogController(ILogService service)
+        public LogController(ILogService service, IHubContext<BroadcastHub> hubContext)
         {
             _service = service;
+            _hubContext = hubContext;
         }
 
         // GET api/log
@@ -48,6 +52,7 @@ namespace WebApi.Controllers
             }
 
             var res = await _service.Log(user);
+            await _hubContext.Clients.All.SendAsync("employee-logged"); // broadcast to web client
             return new OkObjectResult(JsonConvert.SerializeObject(res, settings));
         }
 

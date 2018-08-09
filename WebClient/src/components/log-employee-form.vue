@@ -22,10 +22,10 @@
 </template>
 
 <script>
-import { LOG_EMPLOYEE } from '@/store/actions-type'
 import { mapGetters } from 'vuex'
 import * as signalR from "@aspnet/signalr";
-
+import { LOG_EMPLOYEE } from '@/store/actions-type'
+import { EventBus } from '@/event-bus.js'
 
 export default {
     data () {
@@ -63,16 +63,8 @@ export default {
         }
     },
 
-    mounted () {
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl("http://localhost:5000/broadcast")
-            .build();
-
-        connection.on("send", (data) => {
-            console.log(data)
-        })
-
-        connection.start().catch(err => document.write(err));
+    created () {
+        EventBus.$emit('toggle-drawer')
     }
 }
 </script>
