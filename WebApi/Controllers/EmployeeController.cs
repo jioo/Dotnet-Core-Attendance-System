@@ -15,6 +15,7 @@ using WebApi.Services;
 
 namespace WebApi.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class EmployeeController : ControllerBase
@@ -42,6 +43,7 @@ namespace WebApi.Controllers
             var res = await _service.FindAsync(id);
             return new OkObjectResult( JsonConvert.SerializeObject(res, settings) );
         }
+        
         
         // PUT api/employee
         [HttpPut]

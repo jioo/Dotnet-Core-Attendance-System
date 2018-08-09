@@ -29,8 +29,8 @@ export default {
         return {
             valid: false,
             form: {
-                username: 'superadmin',
-                password: '123456'
+                username: '',
+                password: ''
             },
             required: (value) => !!value || 'This field is required.'
         }

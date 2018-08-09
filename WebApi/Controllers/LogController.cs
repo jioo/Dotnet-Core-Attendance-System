@@ -15,6 +15,7 @@ using WebApi.Services;
 
 namespace WebApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class LogController : ControllerBase
@@ -37,6 +38,7 @@ namespace WebApi.Controllers
 
         // POST api/log
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Log([FromBody] LogInOutViewModel model)
         {
             var user = await _service.CheckCardNo(model);
@@ -51,6 +53,7 @@ namespace WebApi.Controllers
 
         // PUT api/log
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromBody]LogEditViewModel model)
         {
             try

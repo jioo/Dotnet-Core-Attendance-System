@@ -24,7 +24,6 @@
 <script>
 import { LOG_EMPLOYEE } from '@/store/actions-type'
 import { mapGetters } from 'vuex'
-// import { HubConnection } from '@aspnet/signalr'
 import * as signalR from "@aspnet/signalr";
 
 

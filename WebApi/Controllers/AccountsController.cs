@@ -15,7 +15,7 @@ using WebApi.Services;
 
 namespace WebApi.Controllers
 {
-    // [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     public class AccountsController : ControllerBase
     {

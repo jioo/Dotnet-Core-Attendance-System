@@ -2,7 +2,7 @@
     <div>
         <v-toolbar app fixed clipped-left>
             <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-            <v-toolbar-title>BDF ATTENDANCE SYSTEM</v-toolbar-title>
+            <v-toolbar-title>ATTENDANCE SYSTEM</v-toolbar-title>
             <v-spacer></v-spacer>
         </v-toolbar>
         

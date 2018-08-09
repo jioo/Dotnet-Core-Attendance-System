@@ -19,11 +19,6 @@ namespace WebApi.Repositories
             _dbSet = context.Set<TEntity>();
         }
 
-        private static object GetPropValue(object src, string propName)
-        {
-            return src.GetType().GetProperty(propName).GetValue(src, null);
-        }
-
         public TEntity GetFirstOrDefault(Expression<Func<TEntity, bool>> filter = null, params Expression<Func<TEntity, object>>[] includes)
         {
             IQueryable<TEntity> query = _dbSet;
