@@ -36,8 +36,7 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var res = await _service.GetAllAsync();
-            return new OkObjectResult(JsonConvert.SerializeObject(res, settings));
+            return new OkObjectResult(await _service.GetAllAsync());
         }
 
         // POST api/log
@@ -45,15 +44,13 @@ namespace WebApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Log([FromBody] LogInOutViewModel model)
         {
-            var user = await _service.CheckCardNo(model);
-            if (user.Id == Guid.Empty)
-            {
-                return BadRequest("Invalid username or password!");
-            }
+            // Validate card no. & password
+            var user = await _service.ValidateTimeInOutCredentials(model);
+            if (user.Id == Guid.Empty) return BadRequest("Invalid username or password!");
 
-            var res = await _service.Log(user);
-            await _hubContext.Clients.All.SendAsync("employee-logged"); // broadcast to web client
-            return new OkObjectResult(JsonConvert.SerializeObject(res, settings));
+            // Broadcast to web client
+            await _hubContext.Clients.All.SendAsync("employee-logged"); 
+            return new OkObjectResult(await _service.Log(user));
         }
 
         // PUT api/log
@@ -61,20 +58,7 @@ namespace WebApi.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromBody]LogEditViewModel model)
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest("Invalid Request!");
-                }
-
-                var res = await _service.UpdateAsync(model);
-                return new OkObjectResult(JsonConvert.SerializeObject(res, settings));
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return new OkObjectResult(await _service.UpdateAsync(model));
         }
     }
 }

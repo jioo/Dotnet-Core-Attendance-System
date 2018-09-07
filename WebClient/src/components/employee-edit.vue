@@ -10,13 +10,13 @@
                     <v-form v-model="valid" ref="form">
                         <v-layout wrap>
                             <v-flex md12>
-                                <v-text-field v-model="form.FullName" label="Full Name" required :rules="[required]"></v-text-field>
+                                <v-text-field v-model="form.fullName" label="Full Name" required :rules="[required]"></v-text-field>
                             </v-flex>
                             <v-flex md12>
-                                <v-text-field v-model="form.CardNo" label="Card No" required :rules="[required]"></v-text-field>
+                                <v-text-field v-model="form.cardNo" label="Card No" required :rules="[required]"></v-text-field>
                             </v-flex>
                             <v-flex md12>
-                                <v-text-field v-model="form.Position" label="Position"></v-text-field>
+                                <v-text-field v-model="form.position" label="Position"></v-text-field>
                             </v-flex>
                         </v-layout>
                     </v-form>

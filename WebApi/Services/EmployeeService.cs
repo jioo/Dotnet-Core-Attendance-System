@@ -19,7 +19,10 @@ namespace WebApi.Services
         private readonly IRepository<Employee> _repo;
         private readonly ApplicationDbContext _context;
 
-        public EmployeeService(UserManager<User> manager, IMapper mapper, IRepository<Employee> repo, ApplicationDbContext context)
+        public EmployeeService(
+            UserManager<User> manager, 
+            IMapper mapper, IRepository<Employee> repo, 
+            ApplicationDbContext context)
         {
             _manager = manager;
             _mapper = mapper;
@@ -27,44 +30,17 @@ namespace WebApi.Services
             _context = context;
         }
 
+        /// <summary>
+        /// <see cref="IEmployeeService.GetAllAsync"/>
+        /// </summary>
         public async Task<IList<Employee>> GetAllAsync()
-        {
-            return await _repo.Context.Query()
-                .OrderByDescending(m => m.Created)
-                .Include(m => m.Identity)
-                .ToListAsync();
-        }
-
-        public async Task<Employee> FindAsync(Guid id)
-        {
-            return await _repo.Context.GetByIdAsync(id);
-        }
-
-        public async Task<bool> isCardExist(Guid id, string cardNo)
-        {
-            var res = await _repo.Context.Query()
-                .Where(m => m.Id != id)
-                .Where(m => m.CardNo == cardNo)
-                .Where(m => m.Deleted == null)
-                .CountAsync();
-            return (res > 0) ? true: false;
-        }
-
-        public async Task<Employee> GetEmployeeByUserId(string id)
-        {
-            var result = await _repo.Context.Query()
-                .Where(m => m.IdentityId == id)
-                .FirstOrDefaultAsync();
-
-            return (result != null) ? result :  new Employee{ FullName = "Administrator" };
-        }
-
-        public async Task AddAsync(Employee emp)
         {
             try
             {
-                _repo.Context.Insert(emp);
-                await _repo.SaveAsync();
+                return await _repo.Context.Query()
+                    .OrderByDescending(m => m.Created)
+                    .Include(m => m.Identity)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -72,18 +48,97 @@ namespace WebApi.Services
             }
         }
 
-        public async Task<Employee> UpdateAsync(EmployeeViewModel model)
+        /// <summary>
+        /// <see cref="IEmployeeService.FindAsync"/>
+        /// </summary>
+        public async Task<EmployeeViewModel> FindAsync(Guid id)
         {
             try
             {
-                var oldModel = _repo.Context.GetById(model.Id);
-                _mapper.Map(model, oldModel);
-                oldModel.Updated = DateTime.UtcNow;
+                var model =  await _repo.Context.GetByIdAsync(id);
+                return _mapper.Map<EmployeeViewModel>(model);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
-                _repo.Context.Update(oldModel);
+        /// <summary>
+        /// <see cref="IEmployeeService.isCardExist"/>
+        /// </summary>
+        public async Task<bool> isCardExist(Guid id, string cardNo)
+        {
+            try
+            {
+                var res = await _repo.Context.Query()
+                    .Where(m => m.Id != id)
+                    .Where(m => m.CardNo == cardNo)
+                    .Where(m => m.Deleted == null)
+                    .CountAsync();
+                return (res > 0) ? true: false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// <see cref="IEmployeeService.GetEmployeeByUserId"/>
+        /// </summary>
+        public async Task<EmployeeViewModel> GetEmployeeByUserId(string id)
+        {
+            try
+            {
+                var result = await _repo.Context.Query()
+                    .Where(m => m.IdentityId == id)
+                    .FirstOrDefaultAsync();
+
+                return (result != null) 
+                    ?  _mapper.Map<EmployeeViewModel>(result)
+                    :  new EmployeeViewModel{ FullName = "Administrator" };
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// <see cref="IEmployeeService.AddAsync"/>
+        /// </summary>
+        public async Task<EmployeeViewModel> AddAsync(EmployeeViewModel viewModel)
+        {
+            try
+            {
+                var model = _mapper.Map<Employee>(viewModel);
+                _repo.Context.Insert(model);
+                await _repo.SaveAsync();
+                
+                return _mapper.Map<EmployeeViewModel>(model);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// <see cref="IEmployeeService.UpdateAsync"/>
+        /// </summary>
+        public async Task<EmployeeViewModel> UpdateAsync(EmployeeViewModel viewModel)
+        {
+            try
+            {
+                var model = _repo.Context.GetById(viewModel.Id);
+                _mapper.Map(viewModel, model);
+                model.Updated = DateTime.UtcNow;
+
+                _repo.Context.Update(model);
                 await _repo.SaveAsync();
 
-                return await FindAsync(oldModel.Id);
+                return _mapper.Map<EmployeeViewModel>(model);
             }
             catch (Exception ex)
             {

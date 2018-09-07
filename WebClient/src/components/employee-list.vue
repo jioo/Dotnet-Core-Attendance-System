@@ -10,11 +10,11 @@
         disable-initial-sort :rows-per-page-items="[10]" :pagination.sync="pagination" hide-actions>
             <v-progress-linear slot="progress" indeterminate></v-progress-linear>
             <template slot="items" slot-scope="props">
-                <td>{{ props.item.FullName }}</td>
-                <td>{{ props.item.Position }}</td>
-                <td>{{ props.item.CardNo }}</td>
+                <td>{{ props.item.fullName }}</td>
+                <td>{{ props.item.position }}</td>
+                <td>{{ props.item.cardNo }}</td>
                 <td>
-                    <v-btn icon class="mx-0" @click="openDialog(props.item.Id)">
+                    <v-btn icon class="mx-0" @click="openDialog(props.item.id)">
                         <v-icon color="teal">edit</v-icon>
                     </v-btn>
                 </td>
@@ -37,9 +37,9 @@ export default {
             search: "",
             pagination: {},
             headers: [
-                { text: "Employee Name", value: "FullName" },
-                { text: "Position", value: "Position" },
-                { text: "Card No", value: "CardNo" },
+                { text: "Employee Name", value: "fullName" },
+                { text: "Position", value: "position" },
+                { text: "Card No", value: "cardNo" },
                 { text: 'Actions', sortable: false }
             ]
         }

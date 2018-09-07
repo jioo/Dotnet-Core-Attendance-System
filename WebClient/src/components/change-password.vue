@@ -3,13 +3,13 @@
         <v-card-text>
             <v-form v-model="valid" ref="form">
                 <v-text-field label="Old Password" type="password" color="orange"
-                v-model="form.oldpassword" required :rules="[required]"></v-text-field>
+                v-model="form.oldPassword" required :rules="[required]"></v-text-field>
                 
                 <v-text-field label="New Password" type="password" color="orange"
-                v-model="form.newpassword" required :rules="[required, minLength]"></v-text-field>
+                v-model="form.newPassword" required :rules="[required, minLength]"></v-text-field>
 
                 <v-text-field label="Confirm Password" type="password" color="orange"
-                v-model="form.confirmpassword" required :rules="[required, equalToPassword]"></v-text-field>
+                v-model="form.confirmPassword" required :rules="[required, equalToPassword]"></v-text-field>
             </v-form>
         </v-card-text>
         <v-card-actions>
@@ -29,21 +29,18 @@ export default {
             valid: false,
             form: {
                 username: '',                
-                oldpassword: '',
-                newpassword: '',
-                confirmpassword: ''
+                oldPassword: '',
+                newPassword: '',
+                confirmPassword: ''
             },
             required: (value) => !!value || 'This field is required.',
             minLength: function (value) {
-                if (value == null) return true
-
-                if(value.length >= 6) {
-                    return true
-                }
-
+                if(value == null || value.length >= 6) return true
                 return 'Password must be atleast 6 characters.'
             },
-            equalToPassword: (value) => (!!value && value == this.form.newpassword) || 'Please enter the same value again.',
+            equalToPassword: (value) => 
+                (!!value && value == this.form.newPassword) || 
+                'Please enter the same value again.',
         }
     },
 
@@ -68,7 +65,6 @@ export default {
     created () {
         this.form.username = this.currentUser.user.username
     }
-    
 }
 </script>
 

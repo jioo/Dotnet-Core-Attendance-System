@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,9 +50,12 @@ namespace WebApi
 
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
-                    b => b.MigrationsAssembly("WebApi")));
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection"),
+                    b => b.MigrationsAssembly("WebApi"))
+                );
 
+            // DI: IoC
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<ILogService, LogService>();
             services.AddScoped<IConfigService, ConfigService>();
@@ -63,7 +65,7 @@ namespace WebApi
 
             services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
-            // jwt wire up
+            // JWT wire up
             // Get options from app settings
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
 
@@ -117,23 +119,28 @@ namespace WebApi
             builder.AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
             services.AddAutoMapper();
-            services.AddMvc(
-                    // options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()) 
-                )
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(options =>
+            services.AddMvc(options => 
                 {
-                    options.SerializerSettings.Formatting = Formatting.Indented;
-                });
-
+                    // Add automatic model validation
+                    options.Filters.Add(typeof(ValidateModelStateAttribute));
+                    // options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             
-            services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
+            // services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
             services.AddCors();
             services.AddSignalR();
 
+            // Configure Swagger
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Attendance Core Api", Version = "v1" });
+
+                // Swagger 2.+ support
+                var security = new Dictionary<string, IEnumerable<string>>
+                {
+                    {"Bearer", new string[] { }},
+                };
 
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {
@@ -142,11 +149,12 @@ namespace WebApi
                     In = "header",
                     Type = "apiKey"
                 });
+                c.AddSecurityRequirement(security);
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider services, IAntiforgery antiforgery)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider services)
         {
             if (env.IsDevelopment())
             {
@@ -236,13 +244,11 @@ namespace WebApi
                 await userManager.AddToRoleAsync(user, "Admin");
             }
 
-            // Check if Employee role exists
+            // Check if Employee role exist
             var employeeExist = await roleManager.RoleExistsAsync("Employee");
-            if (!employeeExist)
-            {
-                // Create Employee role
-                result = await roleManager.CreateAsync(new IdentityRole("Employee"));
-            }
+
+            // Create Employee role if does not exist
+            if (!employeeExist) await roleManager.CreateAsync(new IdentityRole("Employee"));
         }
 
         private async Task AttendanceConfiguration(IServiceProvider services)
@@ -250,7 +256,7 @@ namespace WebApi
             using (var context = services.GetRequiredService<ApplicationDbContext>())
             {
                 // Check if configuration already exists
-                var isConfigExist = await context.Configurations.FirstOrDefaultAsync();
+                var isConfigExist = await context.Configurations.OrderBy(m => m.Id).FirstOrDefaultAsync();
 
                 if (isConfigExist == null)
                 {

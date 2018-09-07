@@ -10,15 +10,15 @@
         disable-initial-sort :rows-per-page-items="[10]" :pagination.sync="pagination" hide-actions>
             <v-progress-linear slot="progress" indeterminate></v-progress-linear>
             <template slot="items" slot-scope="props">
-                <td v-if="isRole('Admin')">{{ props.item.FullName }}</td>
+                <td v-if="isRole('Admin')">{{ props.item.fullName }}</td>
 
-                <td v-bind:class="{ red: isLate(props.item.TimeIn) }">
-                    {{ props.item.TimeIn }} &nbsp; 
-                    <v-chip outline color="white" v-if="isLate(props.item.TimeIn)" >{{ computeTimeInDiff(props.item.TimeIn) }}</v-chip>
+                <td v-bind:class="{ red: isLate(props.item.timeIn) }">
+                    {{ props.item.timeIn }} &nbsp; 
+                    <v-chip outline color="white" v-if="isLate(props.item.timeIn)" >{{ computeTimeInDiff(props.item.timeIn) }}</v-chip>
                 </td>
-                <td v-bind:class="{ green: isUnderTime(props.item.TimeOut) }">
-                    {{ props.item.TimeOut }} &nbsp; 
-                    <v-chip outline color="white" v-if="isUnderTime(props.item.TimeOut)" >{{ computeTimeOutDiff(props.item.TimeOut) }}</v-chip>
+                <td v-bind:class="{ green: isUnderTime(props.item.timeOut) }">
+                    {{ props.item.timeOut }} &nbsp; 
+                    <v-chip outline color="white" v-if="isUnderTime(props.item.timeOut)" >{{ computeTimeOutDiff(props.item.timeOut) }}</v-chip>
                 </td>
 
                 <td v-if="isRole('Admin')">
@@ -74,8 +74,8 @@ export default {
             this.items = this.logs
             this.headers = [
                 { text: "Employee Name", value: "FullName" },
-                { text: "Time In", value: "TimeIn" },
-                { text: "Time Out", value: "TimeOut" },
+                { text: "Time In", value: "timeIn" },
+                { text: "Time Out", value: "timeOut" },
                 { text: 'Actions', sortable: false }
             ];
 
@@ -83,8 +83,8 @@ export default {
                 const userId = this.currentUser.user.empId
                 this.items = this.logs.filter(m => m.EmployeeId == userId)
                 this.headers = [
-                    { text: "Time In", value: "TimeIn" },
-                    { text: "Time Out", value: "TimeOut" }
+                    { text: "Time In", value: "timeIn" },
+                    { text: "Time Out", value: "timeOut" }
                 ];
             }
         },

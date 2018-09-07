@@ -4,19 +4,13 @@ namespace WebApi.Helpers
 {
     public class DateHelper 
     {
-        public static string ToLocal(DateTime? utcDate)
-        {
-            return DateTime.Parse(utcDate.ToString()).ToLocalTime().ToString();
-        }
+        public static string ToLocal(DateTime? utcDate) =>
+            DateTime.Parse(utcDate.ToString()).ToLocalTime().ToString();
 
-        public static DateTime ToLocalDateTime(DateTime? utcDate)
-        {
-            return DateTime.Parse(utcDate.ToString()).ToLocalTime();
-        }
+        public static DateTime ToLocalDateTime(DateTime? utcDate) =>
+            DateTime.Parse(utcDate.ToString()).ToLocalTime();
 
-        public static DateTime ToUtc(string localDate)
-        {
-            return DateTime.Parse(localDate).ToUniversalTime();
-        }
+        public static DateTime ToUtc(string localDate) =>
+            DateTime.Parse(localDate).ToUniversalTime();
     }
 }

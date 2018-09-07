@@ -20,7 +20,7 @@ const mutations = {
         // state.logs = payload
     },
     [UPDATE_LOG] (state, payload) {
-        let index = state.logs.findIndex(x => x.Id == payload.Id)
+        let index = state.logs.findIndex(x => x.id == payload.id)
         state.logs.splice(index, 1, payload)
     }
 }

@@ -8,8 +8,19 @@ namespace WebApi.Services
 {
     public interface IConfigService
     {
+        /// <summary>
+        /// Get the first record in Configuration
+        /// </summary>
         Task<Configuration> FirstOrDefaultAsync();
-        Task UpdateAsync(ConfigurationViewModel model);
+
+        /// <summary>
+        /// Update existing Configuration
+        /// </summary>
+        /// <param name="viewModel">view model</param>
+        /// <returns>
+        /// Returns <see cref="ConfigurationViewModel"/>
+        /// </returns>
+        Task UpdateAsync(ConfigurationViewModel viewModel);
     }
 
 }

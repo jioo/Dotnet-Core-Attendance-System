@@ -143,8 +143,8 @@ export default {
             this.initOutDateTime()
         },
         edit () {
-            this.form.TimeIn = this.computedInDate + ' ' + this.computedTimeIn
-            this.form.TimeOut = (!this.toggleTimeOut && this.computedOutDate && this.computedOutTime) 
+            this.form.timeIn = this.computedInDate + ' ' + this.computedTimeIn
+            this.form.timeOut = (!this.toggleTimeOut && this.computedOutDate && this.computedOutTime) 
                 ? this.computedOutDate + ' ' + this.computedOutTime 
                 : ''
             
@@ -165,18 +165,18 @@ export default {
                 : moment(value, newFormat).format(originalFormat).toUpperCase()
         },
         initInDateTime () {
-            const inDate = this.form.TimeIn.split(' ')[0]
-            const inTime = (this.form.TimeIn)
-                ? this.form.TimeIn.split(' ')[1] + ' ' + this.form.TimeIn.split(' ')[2]
-                : this.form.TimeIn
+            const inDate = this.form.timeIn.split(' ')[0]
+            const inTime = (this.form.timeIn)
+                ? this.form.timeIn.split(' ')[1] + ' ' + this.form.timeIn.split(' ')[2]
+                : this.form.timeIn
             this.inDate = this.format('date', inDate, false)
             this.inTime =  this.format('time', inTime, false)
         },
         initOutDateTime () {
-            const outDate = this.form.TimeOut.split(' ')[0]
-            const outTime = (this.form.TimeOut !== '') 
-                ? this.form.TimeOut.split(' ')[1] + ' ' + this.form.TimeOut.split(' ')[2]
-                : this.form.TimeOut
+            const outDate = this.form.timeOut.split(' ')[0]
+            const outTime = (this.form.timeOut !== '') 
+                ? this.form.timeOut.split(' ')[1] + ' ' + this.form.timeOut.split(' ')[2]
+                : this.form.timeOut
             
             this.outDate = this.format('date', outDate, false)
             this.outTime =  this.format('time', outTime, false)

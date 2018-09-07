@@ -11,7 +11,7 @@ namespace WebApi.Helpers
 {
     public class Tokens
     {
-        public static async Task<string> GenerateJwt(
+        public static async Task<Object> GenerateJwt(
             ClaimsIdentity identity,
             IJwtService jwtService,
             Guid empId,
@@ -36,7 +36,7 @@ namespace WebApi.Helpers
                 expires_in = (int)jwtOptions.ValidFor.TotalSeconds
             };
 
-            return JsonConvert.SerializeObject(response);
+            return response;
         }
     }
 }

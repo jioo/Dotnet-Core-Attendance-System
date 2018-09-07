@@ -20,7 +20,6 @@ namespace WebApi.Controllers
     [ApiController]
     public class ConfigController : ControllerBase
     {
-        private JsonSerializerSettings settings = new JsonSerializerSettings { Formatting = Formatting.Indented };
         private readonly IConfigService _service;
         public ConfigController(IConfigService service)
         {
@@ -31,8 +30,7 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var res = await _service.FirstOrDefaultAsync();
-            return new OkObjectResult( JsonConvert.SerializeObject(res, settings) );
+            return new OkObjectResult(await _service.FirstOrDefaultAsync());
         }
 
         // PUT api/config

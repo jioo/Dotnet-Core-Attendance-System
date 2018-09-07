@@ -32,31 +32,44 @@ namespace WebApi.Services
             _manager = manager;
         }
 
+        /// <summary>
+        /// <see cref="ILogService.LogViewModel"/>
+        /// </summary>
         public async Task<IList<LogViewModel>> GetAllAsync()
         {
-            // return await _repoLog.Context.GetAllAsync();
-            return await _repoLog.Context.Query()
-                .Where(m => m.Deleted == null)
-                .OrderByDescending(m => m.Created)
-                .Include(m => m.Employee)
-                .Select(m => new LogViewModel
-                {
-                    Id = m.Id,
-                    EmployeeId = m.EmployeeId,
-                    TimeIn = DateHelper.ToLocal(m.TimeIn),
-                    TimeOut = (m.TimeOut == null) ? "": DateHelper.ToLocal(m.TimeOut),
-                    Created = m.Created, 
-                    Updated = m.Updated,
-                    Deleted = m.Deleted,
-                    FullName = m.Employee.FullName
-                })
-                .ToListAsync();
+            try
+            {
+                return await _repoLog.Context.Query()
+                    .Where(m => m.Deleted == null)
+                    .OrderByDescending(m => m.Created)
+                    .Include(m => m.Employee)
+                    .Select(m => new LogViewModel
+                    {
+                        Id = m.Id,
+                        EmployeeId = m.EmployeeId,
+                        TimeIn = DateHelper.ToLocal(m.TimeIn),
+                        TimeOut = (m.TimeOut == null) ? "": DateHelper.ToLocal(m.TimeOut),
+                        Created = m.Created, 
+                        Updated = m.Updated,
+                        Deleted = m.Deleted,
+                        FullName = m.Employee.FullName
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex) 
+            {
+                throw ex;
+            }
         }
 
+        /// <summary>
+        /// <see cref="ILogService.FindAsync"/>
+        /// </summary>
         public async Task<LogViewModel> FindAsync(Guid id)
         {
-            // return await _repoLog.Context.GetByIdAsync(id);
-            return await _repoLog.Context.Query()
+            try
+            {
+                return await _repoLog.Context.Query()
                     .Where(m => m.Id == id)
                     .Include(m => m.Employee)
                     .Select(m => new LogViewModel
@@ -71,32 +84,6 @@ namespace WebApi.Services
                         FullName = m.Employee.FullName
                     })
                     .FirstAsync();
-        }
-
-        public async Task<Employee> CheckCardNo(LogInOutViewModel model)
-        {
-            try
-            {
-                var emp = await _repoEmp.Context.Query()
-                    .Where(m => m.CardNo == model.CardNo)
-                    .Where(m => m.Status == Status.Active)
-                    .Where(m => m.Deleted == null)
-                    .SingleOrDefaultAsync();
-                    
-                if(emp == null) 
-                {
-                    return new Employee{ Id = Guid.Empty };
-                }
-
-                var user = await _manager.FindByIdAsync(emp.IdentityId);
-                if (await _manager.CheckPasswordAsync(user, model.Password))
-                {
-                    return emp;
-                }
-                else
-                {
-                    return new Employee{ Id = Guid.Empty };
-                }
             }
             catch (Exception ex)
             {
@@ -104,13 +91,46 @@ namespace WebApi.Services
             }
         }
 
-        public async Task<LogResultViewModel> Log(Employee emp)
+        /// <summary>
+        /// <see cref="ILogService.ValidateTimeInOutCredentials"/>
+        /// </summary>
+        public async Task<Employee> ValidateTimeInOutCredentials(LogInOutViewModel model)
+        {
+            try
+            {
+                // Get employee information
+                var emp = await _repoEmp.Context.Query()
+                    .Where(m => m.CardNo == model.CardNo)
+                    .Where(m => m.Status == Status.Active)
+                    .Where(m => m.Deleted == null)
+                    .SingleOrDefaultAsync();
+                
+                // Check if employee exist
+                if(emp == null) return new Employee{ Id = Guid.Empty };
+
+                // Check if password is correct
+                var user = await _manager.FindByIdAsync(emp.IdentityId);
+                if (!await _manager.CheckPasswordAsync(user, model.Password))
+                    return new Employee{ Id = Guid.Empty };
+
+                return emp;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// <see cref="ILogService.Log"/>
+        /// </summary>
+        public async Task<LogResultViewModel> Log(Employee employee)
         {
             try
             {
                 var newLog = new Log();
                 var log = await _repoLog.Context.Query()
-                    .Where(m => m.EmployeeId == emp.Id)
+                    .Where(m => m.EmployeeId == employee.Id)
                     .Where(m => m.TimeOut == null)
                     .Where(m => m.Deleted == null)
                     .SingleOrDefaultAsync();
@@ -118,7 +138,7 @@ namespace WebApi.Services
                 // Log in user
                 if (log == null)
                 {
-                    newLog.EmployeeId = emp.Id;
+                    newLog.EmployeeId = employee.Id;
                     newLog.TimeIn = DateTime.UtcNow;
                     _repoLog.Context.Insert(newLog);
                 }
@@ -138,10 +158,12 @@ namespace WebApi.Services
                 return new LogResultViewModel
                 {   
                     FullName = result.Employee.FullName,
-                    CardNo = emp.CardNo,
-                    Position = emp.Position,
+                    CardNo = employee.CardNo,
+                    Position = employee.Position,
                     TimeIn = DateHelper.ToLocal(result.TimeIn),
-                    TimeOut = (result.TimeOut == null) ? "": DateHelper.ToLocal(result.TimeOut)
+                    TimeOut = (result.TimeOut != null) 
+                        ? DateHelper.ToLocal(result.TimeOut)
+                        : string.Empty
                 };
             }
             catch (Exception ex)
@@ -150,20 +172,27 @@ namespace WebApi.Services
             }
         }
 
-        public async Task<LogViewModel> UpdateAsync(LogEditViewModel model)
+        /// <summary>
+        /// <see cref="ILogService.UpdateAsync"/>
+        /// </summary>
+        public async Task<LogViewModel> UpdateAsync(LogEditViewModel viewModel)
         {
             try
             {
-                var oldModel = _repoLog.Context.GetById(model.Id);
-                model.TimeIn = DateHelper.ToUtc(model.TimeIn.ToString());
-                model.TimeOut =  (model.TimeOut != null) ? DateHelper.ToUtc(model.TimeOut.ToString()): model.TimeOut;
-                _mapper.Map(model, oldModel);
-                oldModel.Updated = DateTime.UtcNow;
+                var model = _repoLog.Context.GetById(viewModel.Id);
+                // Convert datetime to UTC before updating
+                viewModel.TimeIn = DateHelper.ToUtc(viewModel.TimeIn.ToString());
+                viewModel.TimeOut =  (viewModel.TimeOut != null) 
+                    ? DateHelper.ToUtc(viewModel.TimeOut.ToString())
+                    : viewModel.TimeOut;
+                
+                _mapper.Map(viewModel, model);
+                model.Updated = DateTime.UtcNow;
 
-                _repoLog.Context.Update(oldModel);
+                _repoLog.Context.Update(model);
                 await _repoLog.SaveAsync();
 
-                return await FindAsync(oldModel.Id);
+                return await FindAsync(model.Id);
             }
             catch (Exception ex)
             {

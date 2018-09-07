@@ -19,20 +19,17 @@ namespace WebApi.Controllers
     [Route("api/[controller]")]
     public class AccountsController : ControllerBase
     {
-        private readonly IRepository<Employee> _repo;
-        private readonly IEmployeeService _service;
         private readonly UserManager<User> _manager;
+        private readonly IEmployeeService _service;
         private readonly IMapper _mapper;
 
         public AccountsController(
-            IRepository<Employee> repo,
             UserManager<User> manager,
             IEmployeeService service,
             IMapper mapper)
         {
-            _repo = repo;
-            _service = service;
             _manager = manager;
+            _service = service;
             _mapper = mapper;
         }
 
@@ -40,14 +37,16 @@ namespace WebApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody]RegisterViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("Invalid Request!");
-            }
-
-            if (await _service.isCardExist(Guid.Empty, model.CardNo))
+            var isCardExist = await _service.isCardExist(Guid.Empty, model.CardNo);
+            if (isCardExist)
             {
                 return BadRequest("Card No. is already in use");
+            }
+
+            var isUsernameExist = await _manager.FindByNameAsync(model.UserName);
+            if(isUsernameExist != null)
+            {
+                return BadRequest($"Username {model.UserName} is already taken");
             }
 
             // Create user account
@@ -55,47 +54,36 @@ namespace WebApi.Controllers
             var result = await _manager.CreateAsync(user, model.Password);
             await _manager.AddToRoleAsync(user, "Employee");
 
-            if (!result.Succeeded) return new BadRequestObjectResult("Username \'" + model.UserName + "\' is already taken");
+            // Check if account is successfully registered
+            if (!result.Succeeded) return new BadRequestObjectResult("Unable to register account");
 
-            try
+            // Synchronize new account to employee information
+            var syncResult = await _service.AddAsync(new EmployeeViewModel
             {
-                // Synchronize account to customer
-                var emp = new Employee
-                {
-                    IdentityId = user.Id,
-                    Identity = user,
-                    FullName = model.FullName,
-                    CardNo = model.CardNo,
-                    Position = model.Position
-                };
-
-                _repo.Context.Insert(emp);
-                await _repo.SaveAsync();
-                return new OkObjectResult(JsonConvert.SerializeObject(emp, new JsonSerializerSettings { Formatting = Formatting.Indented }));
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+                IdentityId = user.Id,
+                Identity = user,
+                FullName = model.FullName,
+                CardNo = model.CardNo,
+                Position = model.Position
+            });
+            return new OkObjectResult(syncResult);
         }
 
         [Authorize]
         [HttpPost("change-password")]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel model)
+        public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("Invalid Request!");
-            }
-
+            // Check if Old password is correct
             var user = await _manager.FindByNameAsync(model.UserName);
-            var result = await _manager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
-
-            if (!result.Succeeded)
+            if(!await _manager.CheckPasswordAsync(user, model.OldPassword))
             {
                 return BadRequest("Incorrect password");
             }
-
+            
+            // Change account password
+            var result = await _manager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+            if(!result.Succeeded) return BadRequest("Unable to change password");
+            
             return Ok();
         }
     }

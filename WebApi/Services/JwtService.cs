@@ -20,6 +20,9 @@ namespace WebApi.Services
             ThrowIfInvalidOptions(_jwtOptions);
         }
 
+        /// <summary>
+        /// <see cref="IJwtService.GenerateEncodedToken"/>
+        /// </summary>
         public async Task<string> GenerateEncodedToken(string userName, ClaimsIdentity identity)
         {
             var claims = new[]
@@ -44,7 +47,10 @@ namespace WebApi.Services
             return encodedJwt;
         }
 
-        public ClaimsIdentity GenerateClaimsIdentity(string userName, IList<string> roles, string id)
+        /// <summary>
+        /// <see cref="IJwtService.GenerateRoleClaimsIdentity"/>
+        /// </summary>
+        public ClaimsIdentity GenerateRoleClaimsIdentity(IList<string> roles)
         {
             var roleClaims = new List<Claim>();
             foreach(var role in roles) 
@@ -54,13 +60,19 @@ namespace WebApi.Services
 
             return new ClaimsIdentity(roleClaims);
         }
-
-        /// <returns>Date converted to seconds since Unix epoch (Jan 1, 1970, midnight UTC).</returns>
+        
+        #region Helpers
+        /// <summary>
+        /// Date converted to seconds since Unix epoch (Jan 1, 1970, midnight UTC).
+        /// </summary>
         private static long ToUnixEpochDate(DateTime date)
           => (long)Math.Round((date.ToUniversalTime() -
                                new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero))
                               .TotalSeconds);
 
+        /// <summary>
+        /// Model validation based on JwtIssuerOptions
+        /// </summary>
         private static void ThrowIfInvalidOptions(JwtIssuerOptions options)
         {
             if (options == null) throw new ArgumentNullException(nameof(options));
@@ -80,5 +92,6 @@ namespace WebApi.Services
                 throw new ArgumentNullException(nameof(JwtIssuerOptions.JtiGenerator));
             }
         }
+        #endregion Helpers
     }
 }

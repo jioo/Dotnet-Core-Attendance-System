@@ -7,7 +7,7 @@
 
         <v-card-text>
         <v-form v-model="valid" ref="form">
-            <v-text-field prepend-icon="person" label="CardNo" type="text" color="orange" ref="cardNo" autofocus
+            <v-text-field prepend-icon="person" label="Card No." type="text" color="orange" ref="cardNo" autofocus
             v-model="form.cardno" required :rules="[required]" v-on:keyup.enter="$refs.password.focus()"></v-text-field>
             
             <v-text-field prepend-icon="lock" label="Password" type="password" color="orange" ref="password"
@@ -24,7 +24,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import * as signalR from "@aspnet/signalr";
-import { LOG_EMPLOYEE } from '@/store/actions-type'
+import { LOG_EMPLOYEE, LOGOUT } from '@/store/actions-type'
 import { EventBus } from '@/event-bus.js'
 
 export default {
@@ -50,21 +50,25 @@ export default {
                     this.resetForm()
                     this.$refs.cardNo.focus()
                     const notifDuration = 4000
-                    if (res.TimeOut === '' ) {
-                        this.$notify({ type: 'success', text: 'Welcome '+ res.FullName+ '!<br /> Time in: ' + res.TimeIn, duration: notifDuration })
+                    if (res.timeOut === '' ) {
+                        this.$notify({ type: 'success', text: 'Welcome '+ res.fullName+ '!<br /> Time in: ' + res.timeIn, duration: notifDuration })
                     } else {
-                        this.$notify({ type: 'success', text: 'Time out: ' + res.TimeIn, duration: notifDuration })
+                        this.$notify({ type: 'success', text: 'Time out: ' + res.timeIn, duration: notifDuration })
                     }
                 })
             }
         },
         resetForm () {
             this.$refs.form.reset()
+        },
+        logout () {
+            this.$store.dispatch(LOGOUT).then()
         }
     },
 
     created () {
         EventBus.$emit('toggle-drawer')
+        this.logout()
     }
 }
 </script>

@@ -11,10 +11,10 @@
                     <v-form v-model="valid" ref="form">
                         <v-layout wrap>
                             <v-flex md12>
-                                <v-text-field v-model="form.fullname" label="Full Name" required :rules="[required]"></v-text-field>
+                                <v-text-field v-model="form.fullName" label="Full Name" required :rules="[required]"></v-text-field>
                             </v-flex>
                             <v-flex md12>
-                                <v-text-field v-model="form.cardno" label="Card No" required :rules="[required]"></v-text-field>
+                                <v-text-field v-model="form.cardNo" label="Card No" required :rules="[required]"></v-text-field>
                             </v-flex>
                             <v-flex md12>
                                 <v-text-field v-model="form.position" label="Position"></v-text-field>
@@ -50,20 +50,15 @@ export default {
             form: {
                 username: '',
                 password: '',
-                fullname: '',
-                cardno: '',
+                fullName: '',
+                cardNo: '',
                 position: ''
             },
             required: (value) => !!value || 'This field is required.',
             minLength: function (value) {
-                if (value == null) return true
-
-                if(value.length >= 6) {
-                    return true
-                }
-
+                if(value == null || value.length >= 6) return true
                 return 'Password must be atleast 6 characters.'
-            }
+            },
         }
     },
 

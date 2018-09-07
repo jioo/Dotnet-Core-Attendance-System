@@ -22,7 +22,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { LOGIN } from '@/store/actions-type'
+import { LOGIN, LOGOUT } from '@/store/actions-type'
 
 export default {
     data () {
@@ -54,7 +54,14 @@ export default {
                     }
                 })
             }
+        },
+        logout () {
+            this.$store.dispatch(LOGOUT).then()
         }
+    },
+
+    created () {
+        this.logout()
     }
 }
 </script>

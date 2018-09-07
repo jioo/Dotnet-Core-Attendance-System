@@ -21,6 +21,9 @@ namespace WebApi.Services
             _repo = repo;
         }
 
+        /// <summary>
+        /// <see cref="IConfigService.FirstOrDefaultAsync"/>
+        /// </summary>
         public async Task<Configuration> FirstOrDefaultAsync()
         {
             try
@@ -33,14 +36,17 @@ namespace WebApi.Services
             }
         }
 
-        public async Task UpdateAsync(ConfigurationViewModel model)
+        /// <summary>
+        /// <see cref="IConfigService.UpdateAsync"/>
+        /// </summary>
+        public async Task UpdateAsync(ConfigurationViewModel viewModel)
         {
             try
             {
-                var oldModel = _repo.Context.GetById(model.Id);
-                _mapper.Map(model, oldModel);
+                var model = _repo.Context.GetById(viewModel.Id);
+                _mapper.Map(viewModel, model);
 
-                _repo.Context.Update(oldModel);
+                _repo.Context.Update(model);
                 await _repo.SaveAsync();
             }
             catch (Exception ex)

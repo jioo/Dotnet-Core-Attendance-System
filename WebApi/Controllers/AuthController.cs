@@ -26,8 +26,7 @@ namespace WebApi.Controllers
             RoleManager<IdentityRole> roleManager,
             IEmployeeService service,
             IJwtService jwtService,
-            IOptions<JwtIssuerOptions> jwtOptions
-            )
+            IOptions<JwtIssuerOptions> jwtOptions)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -40,21 +39,21 @@ namespace WebApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]LoginViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("Invalid Request!");
-            }
-
+            // Check if password is correct
             var user = await _userManager.FindByNameAsync(model.UserName);
-            if (! await _userManager.CheckPasswordAsync(user, model.Password))
-            {
-                return BadRequest("Invalid username or password"); // user does not exist
-            }
+            if (!await _userManager.CheckPasswordAsync(user, model.Password)) 
+                return BadRequest("Invalid username or password"); 
 
+            // Get User Claims
             var identity = await GetClaimsIdentity(model.UserName, model.Password);
+
+            // Check if account does not exist
             if (identity == null) return BadRequest("Invalid username or password");
 
+            // Get employee information
             var employee = await _service.GetEmployeeByUserId(user.Id);
+
+            // Generate access token for authorization
             var jwt = await Tokens.GenerateJwt(identity, _jwtService, employee.Id, employee.FullName, model.UserName, _jwtOptions);
             return new OkObjectResult(jwt);
         }
@@ -83,26 +82,30 @@ namespace WebApi.Controllers
             return Ok();
         }
 
+        #region Helpers
         private async Task<ClaimsIdentity> GetClaimsIdentity(string userName, string password)
         {
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
                 return await Task.FromResult<ClaimsIdentity>(null);
 
-            // get the user to verifty
+            // Get the user to verifty
             var userToVerify = await _userManager.FindByNameAsync(userName);
-            // get roles
+
+            // Get roles
             var roles = await _userManager.GetRolesAsync(userToVerify);
 
             if (userToVerify == null) return await Task.FromResult<ClaimsIdentity>(null);
 
-            // check the credentials
+            // Check the credentials
             if (await _userManager.CheckPasswordAsync(userToVerify, password))
             {
-                return await Task.FromResult(_jwtService.GenerateClaimsIdentity(userName, roles, userToVerify.Id));
+                // Generate Claims
+                return await Task.FromResult(_jwtService.GenerateRoleClaimsIdentity(roles));
             }
 
             // Credentials are invalid, or account doesn't exist
             return await Task.FromResult<ClaimsIdentity>(null);
         }
+        #endregion
     }
 }

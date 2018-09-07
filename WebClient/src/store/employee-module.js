@@ -20,7 +20,7 @@ const mutations = {
         state.employees.unshift(payload)
     },
     [UPDATE_EMPLOYEE] (state, payload) {
-        let index = state.employees.findIndex(x => x.Id == payload.Id)
+        let index = state.employees.findIndex(x => x.id == payload.id)
         state.employees.splice(index, 1, payload)
     }
 }

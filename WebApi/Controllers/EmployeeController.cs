@@ -20,7 +20,6 @@ namespace WebApi.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        private JsonSerializerSettings settings = new JsonSerializerSettings { Formatting = Formatting.Indented };
         private readonly IEmployeeService _service;
         
         public EmployeeController(IEmployeeService service)
@@ -29,38 +28,31 @@ namespace WebApi.Controllers
         }
 
         // GET api/employee
+        /// <summary>
+        /// List of employees
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var res = await _service.GetAllAsync();
-            return new OkObjectResult( JsonConvert.SerializeObject(res, settings) );
+            return new OkObjectResult(await _service.GetAllAsync());
         }
 
         // GET api/employee/id
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> Find(Guid id)
         {
-            var res = await _service.FindAsync(id);
-            return new OkObjectResult( JsonConvert.SerializeObject(res, settings) );
+            return new OkObjectResult(await _service.FindAsync(id));
         }
-        
         
         // PUT api/employee
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody]EmployeeViewModel model)
+        public async Task<IActionResult> Update(EmployeeViewModel model)
         {
-            if(!ModelState.IsValid)
-            {
-                return BadRequest("Invalid Request!");
-            }
+            // Check if Card No already exist
+            var isCardExist = await _service.isCardExist(model.Id, model.CardNo);
+            if(isCardExist) return BadRequest("Card No. is already in use");
 
-            if(await _service.isCardExist(model.Id, model.CardNo))
-            {
-                return BadRequest("Card No. is already in use");
-            }
-
-            var res = await _service.UpdateAsync(model);
-            return new OkObjectResult( JsonConvert.SerializeObject(res, settings) );
+            return new OkObjectResult(await _service.UpdateAsync(model));
         }
     }
 }
