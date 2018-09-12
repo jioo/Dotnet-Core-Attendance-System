@@ -42,7 +42,6 @@ namespace WebApi.Services
                 return await _repoLog.Context.Query()
                     .Where(m => m.Deleted == null)
                     .OrderByDescending(m => m.Created)
-                    .Include(m => m.Employee)
                     .Select(m => new LogViewModel
                     {
                         Id = m.Id,
@@ -71,7 +70,6 @@ namespace WebApi.Services
             {
                 return await _repoLog.Context.Query()
                     .Where(m => m.Id == id)
-                    .Include(m => m.Employee)
                     .Select(m => new LogViewModel
                     {
                         Id = m.Id,

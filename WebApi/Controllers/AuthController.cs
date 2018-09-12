@@ -12,7 +12,7 @@ using WebApi.Services;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]"), ApiController]
     public class AuthController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
@@ -37,7 +37,8 @@ namespace WebApi.Controllers
 
         // POST api/auth/login
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody]LoginViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             // Check if password is correct
             var user = await _userManager.FindByNameAsync(model.UserName);
@@ -59,24 +60,24 @@ namespace WebApi.Controllers
         }
 
         // POST api/auth/check
-        [HttpGet("check")]
         [Authorize]
+        [HttpGet("check")]
         public IActionResult Check()
         {
             return Ok();
         }
 
         // POST api/auth/is-admin
-        [HttpGet("is-admin")]
         [Authorize(Roles = "Admin")]
+        [HttpGet("is-admin")]
         public IActionResult IsAdmin()
         {
             return Ok();
         }
 
         // POST api/auth/is-employee
-        [HttpGet("is-employee")]
         [Authorize(Roles = "Employee")]
+        [HttpGet("is-employee")]
         public IActionResult IsEmployee()
         {
             return Ok();

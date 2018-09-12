@@ -11,12 +11,12 @@
             v-model="form.cardno" required :rules="[required]" v-on:keyup.enter="$refs.password.focus()"></v-text-field>
             
             <v-text-field prepend-icon="lock" label="Password" type="password" color="orange" ref="password"
-            v-model="form.password" required :rules="[required]" v-on:keyup.enter="logEmp()"></v-text-field>
+            v-model="form.password" required :rules="[required]" v-on:keyup.enter.prevent="logEmp()"></v-text-field>
         </v-form>
         </v-card-text>
         <v-card-actions>    
             <v-spacer></v-spacer>   
-            <v-btn color="orange" :loading="isLoading" @click="logEmp">Login</v-btn>
+            <v-btn color="orange" :loading="isLoading" @click.prevent="logEmp">Login</v-btn>
         </v-card-actions>
     </v-card>
 </template>
@@ -49,11 +49,11 @@ export default {
                 this.$store.dispatch(LOG_EMPLOYEE, JSON.stringify(this.form)).then((res) => {
                     this.resetForm()
                     this.$refs.cardNo.focus()
-                    const notifDuration = 4000
+                    const notifDuration = 8000
                     if (res.timeOut === '' ) {
-                        this.$notify({ type: 'success', text: 'Welcome '+ res.fullName+ '!<br /> Time in: ' + res.timeIn, duration: notifDuration })
+                        this.$notify({ type: 'success', text: `Welcome ${res.fullName}!<br/> Time in: ${res.timeIn}`, duration: notifDuration })
                     } else {
-                        this.$notify({ type: 'success', text: 'Time out: ' + res.timeIn, duration: notifDuration })
+                        this.$notify({ type: 'warning', text: `Goodbye ${res.fullName}!<br/> Time out: ${res.timeIn}`, duration: notifDuration })
                     }
                 })
             }

@@ -14,7 +14,7 @@
                 <td>{{ props.item.position }}</td>
                 <td>{{ props.item.cardNo }}</td>
                 <td>
-                    <v-btn icon class="mx-0" @click="openDialog(props.item.id)">
+                    <v-btn icon class="mx-0" @click.prevent="openDialog(props.item.id)">
                         <v-icon color="teal">edit</v-icon>
                     </v-btn>
                 </td>

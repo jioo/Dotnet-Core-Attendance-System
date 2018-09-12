@@ -18,8 +18,7 @@ using Hubs.BroadcastHub;
 namespace WebApi.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/[controller]"), ApiController]
     public class LogController : ControllerBase
     {
         private JsonSerializerSettings settings = new JsonSerializerSettings { Formatting = Formatting.Indented, ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
@@ -40,9 +39,10 @@ namespace WebApi.Controllers
         }
 
         // POST api/log
-        [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Log([FromBody] LogInOutViewModel model)
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> Log(LogInOutViewModel model)
         {
             // Validate card no. & password
             var user = await _service.ValidateTimeInOutCredentials(model);
@@ -54,9 +54,9 @@ namespace WebApi.Controllers
         }
 
         // PUT api/log
-        [HttpPut]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update([FromBody]LogEditViewModel model)
+        [HttpPut]
+        public async Task<IActionResult> Update(LogEditViewModel model)
         {
             return new OkObjectResult(await _service.UpdateAsync(model));
         }

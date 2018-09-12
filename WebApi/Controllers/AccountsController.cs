@@ -16,7 +16,7 @@ using WebApi.Services;
 namespace WebApi.Controllers
 {
     [Authorize(Roles = "Admin")]
-    [Route("api/[controller]")]
+    [Route("api/[controller]"), ApiController]
     public class AccountsController : ControllerBase
     {
         private readonly UserManager<User> _manager;
@@ -35,7 +35,7 @@ namespace WebApi.Controllers
 
         // POST: api/accounts/register
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody]RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
             var isCardExist = await _service.isCardExist(Guid.Empty, model.CardNo);
             if (isCardExist)
@@ -64,7 +64,8 @@ namespace WebApi.Controllers
                 Identity = user,
                 FullName = model.FullName,
                 CardNo = model.CardNo,
-                Position = model.Position
+                Position = model.Position,
+                Status = Status.Active
             });
             return new OkObjectResult(syncResult);
         }

@@ -2,17 +2,23 @@ import Vue from 'vue'
 import store from '@/store'
 import axios from 'axios'
 import JwtService from './jwt-service'
+import XsrfService from './xsrf-service'
 import { BASE_URL } from '@/config.js'
 import { LOADING_START, LOADING_END } from '@/store/actions-type'
 
 const ApiService = {
     init () {
         axios.defaults.baseURL = BASE_URL + 'api/'
+        axios.defaults.withCredentials = true
+        
+        // Set up anti forgery token
+        XsrfService.setToken()
 
         // Add a request interceptor
         axios.interceptors.request.use((config) => {
             config['headers'] = {
                 'Authorization': 'Bearer ' + JwtService.getToken(),
+                'X-XSRF-TOKEN': XsrfService.getToken(),
                 'Content-Type': 'application/json'
             }
             return config;
@@ -21,7 +27,7 @@ const ApiService = {
         // Add a response interceptor
         axios.interceptors.response.use((response) => {
             store.commit(LOADING_END)
-            // always retorn data in response   
+            // always return data in response   
             return response.data;
         }, error => {
             store.commit(LOADING_END)
@@ -51,8 +57,6 @@ const ApiService = {
                 })
             })
         })
-
-        
     },
 
     put (resource, payload) {

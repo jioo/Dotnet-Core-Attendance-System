@@ -43,6 +43,7 @@ const router = new Router({
 
 // before each transition we check if the route need authentication or roles
 router.beforeEach((to, from, next) => {
+
     // check if the user needs to be authenticated
     if (to.matched.some(m => m.meta.auth)) {
 

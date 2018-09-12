@@ -81,7 +81,7 @@ export default {
 
             if(this.isRole('Employee')) {
                 const userId = this.currentUser.user.empId
-                this.items = this.logs.filter(m => m.EmployeeId == userId)
+                this.items = this.logs.filter(m => m.employeeId === userId)
                 this.headers = [
                     { text: "Time In", value: "timeIn" },
                     { text: "Time Out", value: "timeOut" }

@@ -16,8 +16,7 @@ using WebApi.Services;
 namespace WebApi.Controllers
 {
     [Authorize(Roles = "Admin")]
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/[controller]"), ApiController]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _service;
@@ -46,6 +45,7 @@ namespace WebApi.Controllers
         
         // PUT api/employee
         [HttpPut]
+        [AllowAnonymous]
         public async Task<IActionResult> Update(EmployeeViewModel model)
         {
             // Check if Card No already exist

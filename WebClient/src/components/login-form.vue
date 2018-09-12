@@ -10,12 +10,12 @@
             v-model="form.username" required :rules="[required]"></v-text-field>
             
             <v-text-field prepend-icon="lock" label="Password" type="password" color="orange"
-            v-model="form.password" required :rules="[required]"></v-text-field>
+            v-model="form.password" required :rules="[required]" v-on:keyup.enter.prevent="loginUser()"></v-text-field>
         </v-form>
         </v-card-text>
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="orange" @click="loginUser">Login</v-btn>
+            <v-btn color="orange" :loading="isLoading" @click.prevent="loginUser">Login</v-btn>
         </v-card-actions>
     </v-card>
 </template>
@@ -37,7 +37,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(["currentUser"])
+        ...mapGetters(["currentUser", "isLoading"])
     },
 
     methods: {

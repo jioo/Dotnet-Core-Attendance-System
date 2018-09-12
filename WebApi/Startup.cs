@@ -29,6 +29,7 @@ using WebApi.Services;
 using WebApi.Repositories;
 using WebApi.Helpers;
 using Hubs.BroadcastHub;
+using Microsoft.AspNetCore.Antiforgery;
 
 namespace WebApi
 {
@@ -106,28 +107,29 @@ namespace WebApi
             });
 
             // Add Identity
-            var builder = services.AddIdentityCore<User>(o =>
+            services.AddIdentityCore<User>(o =>
             {
-                // configure identity options
+                // Configure identity options
                 o.Password.RequireDigit = false;
                 o.Password.RequireLowercase = false;
                 o.Password.RequireUppercase = false;
                 o.Password.RequireNonAlphanumeric = false;
                 o.Password.RequiredLength = 6;
-            }).AddRoles<IdentityRole>();
-            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
-            builder.AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
             services.AddAutoMapper();
-            services.AddMvc(options => 
-                {
-                    // Add automatic model validation
-                    options.Filters.Add(typeof(ValidateModelStateAttribute));
-                    // options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             
-            // services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
+            // X-CSRF-Token
+            services.AddAntiforgery(options=> 
+            {
+                options.HeaderName = "X-XSRF-Token";
+                options.SuppressXFrameOptionsHeader = false;
+            });
+
             services.AddCors();
             services.AddSignalR();
 
@@ -192,6 +194,7 @@ namespace WebApi
                     });
             });
 
+            // Enable CORS
             app.UseCors(builder =>
                  builder.AllowAnyOrigin()
                         .AllowAnyHeader()
@@ -201,9 +204,11 @@ namespace WebApi
             
             app.UseAuthentication();
             app.UseMvc();
+
             app.Use(async (context, next) => 
             { 
-                await next(); 
+                await next();
+
                 if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value)) 
                 { 
                     context.Request.Path = "/index.html"; 
@@ -211,15 +216,20 @@ namespace WebApi
                 } 
             }); 
 
+            // Single Page Application set up
             app.UseDefaultFiles(); 
             app.UseStaticFiles();
 
+            // Set up SignalR Hubs
             app.UseSignalR(routes =>
             {
                 routes.MapHub<BroadcastHub>("/broadcast");
             });
 
+            // Identity user seed
             CreateUsersAndRoles(services).Wait();
+
+            // Default Attendance Configuration
             AttendanceConfiguration(services).Wait();
         }
 

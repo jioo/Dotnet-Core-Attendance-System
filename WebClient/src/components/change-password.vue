@@ -14,7 +14,7 @@
         </v-card-text>
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="orange" :loading="isLoading" @click="changePassword" >Update</v-btn>
+            <v-btn color="orange" :loading="isLoading" @click.prevent="changePassword" >Update</v-btn>
         </v-card-actions>
     </v-card>
 </template>

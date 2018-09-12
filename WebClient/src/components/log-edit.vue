@@ -81,7 +81,7 @@
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="error" :loading="isLoading" @click.native="dialog = false">Cancel</v-btn>
-                <v-btn color="success" :loading="isLoading" @click="edit">Update</v-btn>
+                <v-btn color="success" :loading="isLoading" @click.prevent="edit">Update</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
