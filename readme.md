@@ -36,9 +36,10 @@ npm run dev
 ### Features ###
 
 * Fully separate Backend and Frontend
+* Swagger for api documentation (URL: http://localhost:5000/swagger/index.html)
 * Generic Repository Pattern
+* Authentication based JWT Bearer w/ Identity Framework
 * Material design
-* Authentication based on Identity Framework & JWT
 * Realtime update on employee logs
 
 ### Includes ###
@@ -48,7 +49,6 @@ npm run dev
 * [AspNetCore.Identity](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity/) ASP.NET Core Identity is the membership system including membership, login, and user data.
 * [AutoMapper]() A convention-based object-object mapper.
 * [Microsoft.AspNetCore.SignalR](https://www.nuget.org/packages/Microsoft.AspNetCore.SignalR/) Components for providing real-time bi-directional communication across the Web.
-
 * [Vue.js](https://vuejs.org/) The Progressive JavaScript Framework.
 * [Vuetify](https://vuetifyjs.com/en/) Material design component framework for Vue.js.
 * [Vuex](https://vuex.vuejs.org/en/intro.html) State management pattern + library for Vue.js.
