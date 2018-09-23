@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using WebApi.Entities;
 
 namespace WebApi.Features.Logs
 {
@@ -12,5 +14,18 @@ namespace WebApi.Features.Logs
 
         public static DateTime ToUtc(string localDate) =>
             DateTime.Parse(localDate).ToUniversalTime();
+
+        public static IQueryable<LogViewModel> MapLogToDto(this IQueryable<Log> logs) =>
+            logs.Select(m => new LogViewModel
+            {
+                Id = m.Id,
+                EmployeeId = m.EmployeeId,
+                TimeIn = LogExtensions.ToLocal(m.TimeIn),
+                TimeOut = (m.TimeOut == null) ? "": LogExtensions.ToLocal(m.TimeOut),
+                Created = m.Created, 
+                Updated = m.Updated,
+                Deleted = m.Deleted,
+                FullName = m.Employee.FullName
+            });
     }
 }

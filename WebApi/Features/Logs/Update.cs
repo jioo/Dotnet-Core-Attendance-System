@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -56,17 +57,11 @@ namespace WebApi.Features.Logs
                     await _context.SaveChangesAsync();
 
                     // Return result with log information
-                    return new LogViewModel 
-                    {
-                        Id = model.Id,
-                        EmployeeId = model.EmployeeId,
-                        TimeIn = LogExtensions.ToLocal(model.TimeIn),
-                        TimeOut = (model.TimeOut == null) ? "": LogExtensions.ToLocal(model.TimeOut),
-                        Created = model.Created, 
-                        Updated = model.Updated,
-                        Deleted = model.Deleted,
-                        FullName = request.ViewModel.FullName
-                    };
+                    return await _context.Logs
+                        .Where(m => m.Id == model.Id)
+                        .MapLogToDto()
+                        .FirstAsync();
+                        
                 }
                 catch (Exception e)
                 {

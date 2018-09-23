@@ -30,19 +30,9 @@ namespace WebApi.Features.Logs
                 try
                 {
                     return await _context.Logs
+                        .MapLogToDto()
                         .Where(m => m.Deleted == null)
                         .OrderByDescending(m => m.Created)
-                        .Select(m => new LogViewModel
-                        {
-                            Id = m.Id,
-                            EmployeeId = m.EmployeeId,
-                            TimeIn = LogExtensions.ToLocal(m.TimeIn),
-                            TimeOut = (m.TimeOut == null) ? "": LogExtensions.ToLocal(m.TimeOut),
-                            Created = m.Created, 
-                            Updated = m.Updated,
-                            Deleted = m.Deleted,
-                            FullName = m.Employee.FullName
-                        })
                         .ToListAsync(cancellationToken);
                 }
                 catch (Exception e)
