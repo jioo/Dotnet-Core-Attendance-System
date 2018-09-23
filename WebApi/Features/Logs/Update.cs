@@ -65,7 +65,7 @@ namespace WebApi.Features.Logs
                         Created = model.Created, 
                         Updated = model.Updated,
                         Deleted = model.Deleted,
-                        FullName = model.Employee.FullName
+                        FullName = request.ViewModel.FullName
                     };
                 }
                 catch (Exception e)
