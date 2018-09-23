@@ -23,6 +23,7 @@ using WebApi.Infrastructure;
 using WebApi.Entities;
 using Hubs.BroadcastHub;
 using MediatR;
+using WebApi.Extensions;
 
 namespace WebApi
 {
@@ -109,7 +110,12 @@ namespace WebApi
             .AddDefaultTokenProviders();
 
             services.AddAutoMapper();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(o => 
+            {
+                // Catch cancelled exceptions
+                o.Filters.Add<OperationCancelledExceptionFilter>();
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             
             
             // X-CSRF-Token
