@@ -37,7 +37,7 @@ npm run dev
 
 * Fully separate Backend and Frontend
 * Swagger for api documentation (URL: http://localhost:5000/swagger/index.html)
-* Generic Repository Pattern
+* CQRS Pattern (Command Query Responsibility Segregation)
 * Authentication based JWT Bearer w/ Identity Framework
 * Material design
 * Realtime update on employee logs
@@ -47,6 +47,7 @@ npm run dev
 * [.NET Core 2.1](https://docs.microsoft.com/en-us/dotnet/core/) open-source general-purpose development platform maintained by Microsoft. 
 * [Entity Framework Core](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore/) lightweight and extensible version of the popular Entity Framework data access technology.
 * [AspNetCore.Identity](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity/) ASP.NET Core Identity is the membership system including membership, login, and user data.
+* [MediatR](https://github.com/jbogard/MediatR) Simple, unambitious mediator implementation in .NET
 * [AutoMapper]() A convention-based object-object mapper.
 * [Microsoft.AspNetCore.SignalR](https://www.nuget.org/packages/Microsoft.AspNetCore.SignalR/) Components for providing real-time bi-directional communication across the Web.
 * [Vue.js](https://vuejs.org/) The Progressive JavaScript Framework.
