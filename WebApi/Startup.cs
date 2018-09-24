@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,18 +17,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using AutoMapper;
 using Swashbuckle.AspNetCore.Swagger;
-using WebApi.Infrastructures;
+using WebApi.Infrastructure;
 using WebApi.Entities;
-using WebApi.Services;
-using WebApi.Repositories;
-using WebApi.Helpers;
 using Hubs.BroadcastHub;
-using Microsoft.AspNetCore.Antiforgery;
+using MediatR;
+using WebApi.Extensions;
 
 namespace WebApi
 {
@@ -57,13 +51,8 @@ namespace WebApi
                 );
 
             // DI: IoC
-            services.AddScoped<IEmployeeService, EmployeeService>();
-            services.AddScoped<ILogService, LogService>();
-            services.AddScoped<IConfigService, ConfigService>();
-            services.AddScoped(typeof(IContextRepository<>), typeof(ContextRepository<>));
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddSingleton<IJwtService, JwtService>();
-
+            services.AddMediatR(typeof(Startup));
+            
             services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
             // JWT wire up
@@ -121,7 +110,13 @@ namespace WebApi
             .AddDefaultTokenProviders();
 
             services.AddAutoMapper();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(o => 
+            {
+                // Catch cancelled exceptions
+                o.Filters.Add<OperationCancelledExceptionFilter>();
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            
             
             // X-CSRF-Token
             services.AddAntiforgery(options=> 

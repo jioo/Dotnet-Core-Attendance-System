@@ -7,8 +7,8 @@ export default {
     },
 
     setToken() {
-        axios.get("xsrfToken").then(res => {
-            window.localStorage.setItem(XSRF_TOKEN, res.data.token)
+        axios.get("auth/xsrfToken").then(res => {
+            window.localStorage.setItem(XSRF_TOKEN, res.data.result.token)
         })
     }
 }
