@@ -11,7 +11,7 @@ using WebApi.Entities;
 namespace WebApi.Features.Logs
 {
     [Authorize]
-    [Route("/api/[controller]")]
+    [Route("/api/[controller]"), ApiController]
     public class LogController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -25,7 +25,7 @@ namespace WebApi.Features.Logs
         
         // GET: api/log
         [HttpGet]
-        public async Task<IActionResult> Index(BasePagedList parameters)
+        public async Task<IActionResult> Index([FromQuery] BasePagedList parameters)
         {
             return new OkObjectResult(
                 await _mediator.Send(new List.Query(parameters))
