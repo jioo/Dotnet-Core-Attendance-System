@@ -15,7 +15,7 @@ namespace WebApi.Features.Logs
         public static DateTime ToUtc(string localDate) =>
             DateTime.Parse(localDate).ToUniversalTime();
 
-        public static IQueryable<LogViewModel> MapLogToDto(this IQueryable<Log> logs) =>
+        public static IQueryable<LogViewModel> MapToViewModel(this IQueryable<Log> logs) =>
             logs.Select(m => new LogViewModel
             {
                 Id = m.Id,

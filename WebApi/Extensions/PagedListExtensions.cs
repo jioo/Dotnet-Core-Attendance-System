@@ -1,59 +1,29 @@
+using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using WebApi.Entities;
 
 namespace WebApi.Extensions
 {
     public static class PagedListExtendions
     {
-        public static IQueryable<T> ToPagedList<T>(
-            this IQueryable<T> data, 
-            BasePagedList parameters) where T : class
+        /// <summary>
+        /// Paginate a List based on parameters
+        /// </summary>
+        /// <param name="parameters">model for pagination</param>
+        /// <returns>
+        /// Returns <see cref="IQueryable{T}"/> that contains paged list
+        /// </returns>
+        public static IQueryable<T> ToPagedList<T>(this IQueryable<T> queryable, BasePagedList parameters) where T : class
         {
-            var currentQuery = data;
-            
-            // Get all properties of T class 
-            var stringProperties = typeof(T).GetProperties(); 
-
-            // Check if there is a search parameter
-            if(!string.IsNullOrEmpty(parameters.Search))
-            {
-                // Search all columns
-                currentQuery = currentQuery.Where(m => 
-                    stringProperties.Any(prop =>
-                        prop.GetValue(m, null)
-                            .ToString()
-                            .ToLower()
-                            .Contains(parameters.Search.ToLower())
-                    )
-                );
-            }
-
-            // Check if there is a sortBy parameter and descending is not null
-            if(!string.IsNullOrEmpty(parameters.SortBy) &&
-               parameters.Descending != null)
-            {
-                // Find a first the property to sort.
-                var sortBy = stringProperties.Where(prop => 
-                    prop.GetValue(prop, null).ToString().ToLower() 
-                        == parameters.SortBy.ToLower()
-                );
-
-                // Pass the property to sort
-                currentQuery = ( (bool) parameters.Descending)
-                    ? currentQuery.OrderByDescending(m => m.GetType().GetProperty(sortBy.ToString()) )
-                    : currentQuery.OrderBy(m => m.GetType().GetProperty(sortBy.ToString()) );
-            }
+            var pageSize = Convert.ToInt32(parameters.RowsPerPage);
+            var pageNumber = Convert.ToInt32(parameters.Page);
 
             // Paginate based on parameters
-            var pageSize = parameters.RowsPerPage;
-            var pageNumber = parameters.Page;
-            currentQuery = currentQuery
-                .Skip(pageSize * (pageNumber - 1))
-                .Take(pageSize);
-
-            return currentQuery;
+            return queryable.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
         }
     }
 }

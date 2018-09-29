@@ -6,11 +6,12 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using WebApi.Entities;
 
 namespace WebApi.Features.Logs
 {
     [Authorize]
-    [Route("/api/[controller]"), ApiController]
+    [Route("/api/[controller]")]
     public class LogController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -24,9 +25,11 @@ namespace WebApi.Features.Logs
         
         // GET: api/log
         [HttpGet]
-        public async Task<IList<LogViewModel>> Index()
+        public async Task<IActionResult> Index(BasePagedList parameters)
         {
-            return await _mediator.Send(new List.Query());
+            return new OkObjectResult(
+                await _mediator.Send(new List.Query(parameters))
+            );
         }
 
         [AllowAnonymous]

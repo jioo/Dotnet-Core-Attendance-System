@@ -59,7 +59,7 @@ namespace WebApi.Features.Logs
                     // Return result with log information
                     return await _context.Logs
                         .Where(m => m.Id == model.Id)
-                        .MapLogToDto()
+                        .MapToViewModel()
                         .FirstAsync();
                         
                 }
