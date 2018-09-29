@@ -3,7 +3,16 @@ import { FETCH_LOGS, FETCH_LOG, LOG_EMPLOYEE, LOG_EDIT, LOG_DELETE } from './act
 import { SET_LOGS, SET_LOG, UPDATE_LOG } from './mutations-type'
 
 const state = {
-    logs: {}
+    logs: {
+        data: [],
+        meta: {
+            "search": null,
+            "descending": null,
+            "page": 1,
+            "rowsPerPage": 10,
+            "sortBy": null
+        }
+    }
 }
 
 const getters = {
@@ -17,17 +26,21 @@ const mutations = {
         state.logs = payload
     },
     [SET_LOG] (state, payload) {
-        // state.logs = payload
+        state.logs.data = payload
     },
     [UPDATE_LOG] (state, payload) {
-        let index = state.logs.findIndex(x => x.id == payload.id)
-        state.logs.splice(index, 1, payload)
+        let index = state.logs.data.findIndex(x => x.id == payload.id)
+        if (index === -1) return
+        state.logs.data.splice(index, 1, payload)
+    },
+    UPDATE_LOG_META (state, payload) {
+        state.logs.meta = payload
     }
 }
 
 const actions = {
-    [FETCH_LOGS] ({commit}) {
-        return LogService.query().then((response) => {
+    [FETCH_LOGS] ({commit}, meta) {
+        return LogService.query(meta).then((response) => {
             commit(SET_LOGS, response)
         })
     },
@@ -57,7 +70,6 @@ const actions = {
     [LOG_DELETE] ({commit}, payload) {
         return LogService.destroy(payload)
     }
-
 }
 
 export default {

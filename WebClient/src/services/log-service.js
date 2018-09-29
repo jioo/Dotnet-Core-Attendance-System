@@ -1,8 +1,8 @@
 import ApiService from './api-service'
 
 export default {
-    query () {
-        return ApiService.query('log')
+    query (meta) {
+        return ApiService.query(`log?${meta}`)
     },
 
     get (id) {
