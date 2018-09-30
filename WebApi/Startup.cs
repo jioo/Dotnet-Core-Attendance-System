@@ -222,59 +222,14 @@ namespace WebApi
             });
 
             // Identity user seed
-            CreateUsersAndRoles(services).Wait();
+            SeedData.CreateUsersAndRoles(services, Configuration).Wait();
 
             // Default Attendance Configuration
-            AttendanceConfiguration(services).Wait();
-        }
+            SeedData.AttendanceConfiguration(services, Configuration).Wait();
 
-        private async Task CreateUsersAndRoles(IServiceProvider services)
-        {
-            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = services.GetRequiredService<UserManager<User>>();
-            IdentityResult result;
-
-            // Check if Admin role exists
-            var adminExist = await roleManager.RoleExistsAsync("Admin");
-            if (!adminExist)
+            if (env.IsDevelopment())
             {
-                // Create Admin role
-                result = await roleManager.CreateAsync(new IdentityRole("Admin"));
-
-                // Create Default admin account
-                var user = new User { UserName = Configuration["DefaultAdminCredentials:UserName"] };
-                await userManager.CreateAsync(user, Configuration["DefaultAdminCredentials:Password"]);
-
-                // Assign role
-                await userManager.AddToRoleAsync(user, "Admin");
-            }
-
-            // Check if Employee role exist
-            var employeeExist = await roleManager.RoleExistsAsync("Employee");
-
-            // Create Employee role if does not exist
-            if (!employeeExist) await roleManager.CreateAsync(new IdentityRole("Employee"));
-        }
-
-        private async Task AttendanceConfiguration(IServiceProvider services)
-        {
-            using (var context = services.GetRequiredService<ApplicationDbContext>())
-            {
-                // Check if configuration already exists
-                var isConfigExist = await context.Configurations.OrderBy(m => m.Id).FirstOrDefaultAsync();
-
-                if (isConfigExist == null)
-                {
-                    // Add default configurations from config file
-                    await context.Configurations.AddAsync(new Configuration
-                    {
-                        TimeIn = Configuration["AttendanceConfig:TimeIn"],
-                        TimeOut = Configuration["AttendanceConfig:TimeOut"],
-                        GracePeriod = Configuration["AttendanceConfig:GracePeriod"]
-                    });
-
-                    await context.SaveChangesAsync();
-                }
+                SeedData.EnsureSeedEmployeesAndLogs(services, Configuration).Wait();
             }
         }
     }

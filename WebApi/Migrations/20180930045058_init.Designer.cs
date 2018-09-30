@@ -10,14 +10,14 @@ using WebApi.Infrastructure;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180627030439_initial")]
-    partial class initial
+    [Migration("20180930045058_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.0-rtm-30799")
+                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -170,7 +170,9 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdentityId");
+                    b.HasIndex("IdentityId")
+                        .IsUnique()
+                        .HasFilter("[IdentityId] IS NOT NULL");
 
                     b.ToTable("Employees");
                 });
@@ -298,8 +300,8 @@ namespace WebApi.Migrations
             modelBuilder.Entity("WebApi.Entities.Employee", b =>
                 {
                     b.HasOne("WebApi.Entities.User", "Identity")
-                        .WithMany()
-                        .HasForeignKey("IdentityId");
+                        .WithOne("Employee")
+                        .HasForeignKey("WebApi.Entities.Employee", "IdentityId");
                 });
 
             modelBuilder.Entity("WebApi.Entities.Log", b =>

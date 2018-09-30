@@ -31,8 +31,16 @@ namespace WebApi.Features.Accounts
             {
                 try
                 {
-                    // Create user account
-                    var user = new User { UserName = request.ViewModel.UserName };
+                    // Create Employee information
+                    var employeeInfo = new Employee
+                    {
+                        FullName = request.ViewModel.FullName,
+                        CardNo = request.ViewModel.CardNo,
+                        Position = request.ViewModel.Position,
+                        Status = Status.Active
+                    };
+
+                    var user = new User { UserName = request.ViewModel.UserName, Employee = employeeInfo };
                     var result = await _manager.CreateAsync(user, request.ViewModel.Password);
                     await _manager.AddToRoleAsync(user, "Employee");
 

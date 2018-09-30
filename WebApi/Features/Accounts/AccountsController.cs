@@ -32,24 +32,8 @@ namespace WebApi.Features.Accounts
 
             // Create user account
             var user = await _mediator.Send(new Register.Command(viewModel));
-            
-            // Validate result by checking the returned Id
-            if (string.IsNullOrEmpty(user.Id)) return new BadRequestObjectResult("Unable to register account");
 
-            // Synchronize new account to employee information
-            // Mediator from Features/Employees
-            var syncResult = await _mediator.Send(
-                new Employees.Create.Command(new Employees.EmployeeViewModel
-                {
-                    IdentityId = user.Id,
-                    Identity = user,
-                    FullName = viewModel.FullName,
-                    CardNo = viewModel.CardNo,
-                    Position = viewModel.Position,
-                    Status = Status.Active
-                })
-            );
-            return new OkObjectResult(syncResult);
+            return new CreatedResult("", null);
         }
 
         [Authorize]

@@ -112,6 +112,7 @@ namespace WebApi.Features.Logs
                     // Paginated list
                     var result = await queryableModel
                         .ToPagedList(request.Parameters)
+                        .OrderByDescending(m => m.Created)
                         .ToListAsync(cancellationToken);
 
                     return new 
