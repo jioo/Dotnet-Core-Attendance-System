@@ -19,12 +19,12 @@ namespace WebApi.Features.Logs
     {
         public class Query : IRequest<Object> 
         { 
-            public Query(BasePagedList parameters)
+            public Query(DateFilteredList parameters)
             {
                 Parameters = parameters;
             }
 
-            public BasePagedList Parameters { get; }
+            public DateFilteredList Parameters { get; }
         }
 
         public class QueryHandler : IRequestHandler<Query, Object>
@@ -43,6 +43,8 @@ namespace WebApi.Features.Logs
                 try
                 {
                     IQueryable<LogViewModel> queryableModel;
+                    var startDate = request.Parameters.StartDate;
+                    var endDate = request.Parameters.EndDate;
 
                     // Apply Search filter if not null
                     var searchQuery = request.Parameters.Search;
@@ -57,6 +59,13 @@ namespace WebApi.Features.Logs
                     {
                         queryableModel = _context.Logs.MapToViewModel()
                             .Where(m => m.Deleted == null);
+                    }
+
+                    // Apply Date filter
+                    if (startDate != null && endDate != null)
+                    {
+                        endDate = Convert.ToDateTime(endDate).AddHours(23).AddMinutes(59);
+                        queryableModel = queryableModel.Where(m => Convert.ToDateTime(m.TimeIn) >= startDate && Convert.ToDateTime(m.TimeIn) <= endDate);
                     }
 
                     // Handle sortable columns
@@ -107,7 +116,7 @@ namespace WebApi.Features.Logs
                     request.Parameters.RowsPerPage = request.Parameters.RowsPerPage ?? DEFAULT_ROWS_PER_PAGE;
 
                     // Count total items
-                    request.Parameters.TotalItems = _context.Logs.Count();
+                    request.Parameters.TotalItems = queryableModel.Count();
 
                     // Paginated list
                     var result = await queryableModel

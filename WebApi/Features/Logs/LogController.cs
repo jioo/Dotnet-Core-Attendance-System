@@ -25,7 +25,7 @@ namespace WebApi.Features.Logs
         
         // GET: api/log
         [HttpGet]
-        public async Task<IActionResult> Index([FromQuery] BasePagedList parameters)
+        public async Task<IActionResult> Index([FromQuery] DateFilteredList parameters)
         {
             return new OkObjectResult(
                 await _mediator.Send(new List.Query(parameters))
