@@ -8,11 +8,13 @@ import Notifications from 'vue-notification'
 import { sync } from 'vuex-router-sync'
 import store from '@/store'
 import ApiService from '@/services/api-service'
+import VeeValidate from 'vee-validate'
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
 Vue.config.productionTip = false
 
+Vue.use(VeeValidate, { events: 'blur' })
 Vue.use(Vuetify)
 Vue.use(Notifications)
 sync(store, router)

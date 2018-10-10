@@ -5,9 +5,15 @@
             <v-spacer></v-spacer>
         </v-toolbar>
         <v-card-title > 
-            <v-spacer></v-spacer>
-            <v-text-field append-icon="search" v-model="search" label="Search"
-            single-line hide-details @input="onSearch"></v-text-field>
+            <v-container grid-list-md>
+                <v-layout row wrap>
+                    <v-flex md6>
+                        <v-text-field append-icon="search" color="orange" v-model="search" label="Search Name"
+                        single-line hide-details @input="onSearch"></v-text-field>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+            <date-filter />
         </v-card-title>
         <!-- -->
         <v-data-table :items="items" :rows-per-page-items="[10]"  disable-initial-sort  
@@ -44,8 +50,13 @@ import { FETCH_LOGS } from '@/store/actions-type'
 import { EventBus } from '@/event-bus.js'
 import BroadcastConnection from '@/services/broadcast-service'
 import moment from 'moment'
+import DateFilter from '@/components/date-filter'
 
 export default {
+    components: {
+        DateFilter
+    },
+
     data () {
         return {
             search: '',
