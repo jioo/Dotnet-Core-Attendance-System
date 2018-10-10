@@ -1,8 +1,7 @@
 <template>
-    <v-container fluid fill-height>
+    <v-container fluid>
         <v-layout align-center justify-center>
             <v-flex md12>
-                <employee-create />
                 <employee-edit />
                 <employee-list :employees="employees" />
             </v-flex>
@@ -14,13 +13,11 @@
 import { mapGetters } from 'vuex'
 import { FETCH_EMPLOYEES } from '@/store/actions-type'
 import EmployeeList from '@/components/employee-list'
-import EmployeeCreate from '@/components/employee-create'
 import EmployeeEdit from '@/components/employee-edit'
 
 export default {
     components: {
         EmployeeList,
-        EmployeeCreate,
         EmployeeEdit
     },
 

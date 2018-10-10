@@ -1,7 +1,11 @@
 <template>
     <v-card class="elevation-12">
+        <v-toolbar dark color="orange">
+            <v-toolbar-title>Employee List</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <employee-create />
+        </v-toolbar>
         <v-card-title > 
-            Employee List
             <v-spacer></v-spacer>
             <v-text-field append-icon="search" v-model="search" label="Search"
             single-line hide-details></v-text-field>
@@ -29,9 +33,15 @@
 <script>
 import { mapGetters } from 'vuex'
 import { EventBus } from '@/event-bus.js'
+import EmployeeCreate from '@/components/employee-create'
 
 export default {
     props: ['employees'],
+
+    components: {
+        EmployeeCreate
+    },
+
     data () {
         return {
             search: "",

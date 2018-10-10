@@ -1,7 +1,10 @@
 <template>
     <v-card class="elevation-12">
+        <v-toolbar dark color="orange">
+            <v-toolbar-title>Logs</v-toolbar-title>
+            <v-spacer></v-spacer>
+        </v-toolbar>
         <v-card-title > 
-            Logs
             <v-spacer></v-spacer>
             <v-text-field append-icon="search" v-model="search" label="Search"
             single-line hide-details @input="onSearch"></v-text-field>
@@ -100,6 +103,9 @@ export default {
             this.searchDelayTimer = setTimeout(function(){
                 const newMeta = Object.assign({}, this.logs.meta)
                 newMeta.search = val
+                
+                // reset the page to 1 when searching
+                newMeta.page = 1
                 this.getlist(newMeta)
             }.bind(this), 500);
         },

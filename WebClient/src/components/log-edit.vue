@@ -1,10 +1,10 @@
 <template>
     <v-dialog v-model="dialog" persistent max-width="500px">
         <v-card>
-            <v-progress-linear indeterminate v-if="isLoading"></v-progress-linear>
-            <v-card-title>
-                <span class="title">Edit Log</span>
-            </v-card-title>
+            <v-toolbar dark color="orange">
+                <v-toolbar-title>Edit Log</v-toolbar-title>
+                <v-spacer></v-spacer>
+            </v-toolbar>
             <v-card-text>
                 <v-container grid-list-md>
                     <v-layout row wrap>

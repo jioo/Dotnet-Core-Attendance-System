@@ -1,5 +1,9 @@
 <template>
     <v-card class="elevation-12">
+        <v-toolbar dark color="orange">
+            <v-toolbar-title>Change Password</v-toolbar-title>
+            <v-spacer></v-spacer>
+        </v-toolbar>
         <v-card-text>
             <v-form v-model="valid" ref="form">
                 <v-text-field label="Old Password" type="password" color="orange"

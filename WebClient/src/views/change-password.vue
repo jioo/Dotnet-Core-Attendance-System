@@ -1,7 +1,7 @@
 <template>
-    <v-container fluid fill-height>
+    <v-container fluid>
         <v-layout align-center justify-center>
-            <v-flex xs12 sm8 md4>
+            <v-flex md6>
                 <change-password />
             </v-flex>
         </v-layout>

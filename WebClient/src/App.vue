@@ -3,7 +3,9 @@
         <v-app dark>
             <app-header />
             <v-content>
-                <router-view />
+                <v-slide-y-transition mode="out-in">
+                    <router-view />
+                </v-slide-y-transition>
                 <notifications />
             </v-content>
             <app-footer />
