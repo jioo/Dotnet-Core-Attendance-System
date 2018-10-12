@@ -1,6 +1,7 @@
 import LogService from '@/services/log-service'
-import { FETCH_LOGS, FETCH_LOG, LOG_EMPLOYEE, LOG_EDIT, LOG_DELETE } from './actions-type'
-import { SET_LOGS, SET_LOG, UPDATE_LOG } from './mutations-type'
+import { FETCH_LOGS, FETCH_LOG, LOG_EMPLOYEE, LOG_EDIT, LOG_DELETE, RESET_META } from './actions-type'
+import { SET_LOGS, SET_LOG, UPDATE_LOG, UPDATE_META } from './mutations-type'
+import moment from 'moment'
 
 const state = {
     logs: {
@@ -10,7 +11,9 @@ const state = {
             "descending": null,
             "page": 1,
             "rowsPerPage": 10,
-            "sortBy": null
+            "sortBy": null,
+            "startDate": '',
+            "endDate": ''
         }
     }
 }
@@ -23,6 +26,16 @@ const getters = {
 
 const mutations = {
     [SET_LOGS] (state, payload) {
+        let { startDate, endDate } = payload.meta
+        if (startDate) startDate = moment(startDate).format('YYYY-MM-DD')
+        if (endDate) endDate = moment(endDate).format('YYYY-MM-DD')
+
+        payload.meta = {
+            ...payload.meta,
+            startDate: startDate,
+            endDate: endDate
+        }
+
         state.logs = payload
     },
     [SET_LOG] (state, payload) {
@@ -33,7 +46,7 @@ const mutations = {
         if (index === -1) return
         state.logs.data.splice(index, 1, payload)
     },
-    UPDATE_LOG_META (state, payload) {
+    [UPDATE_META] (state, payload) {
         state.logs.meta = payload
     }
 }
@@ -69,6 +82,17 @@ const actions = {
     },
     [LOG_DELETE] ({commit}, payload) {
         return LogService.destroy(payload)
+    },
+    [RESET_META] ({commit}) {
+        commit(UPDATE_META, {
+            "search": null,
+            "descending": null,
+            "page": 1,
+            "rowsPerPage": 10,
+            "sortBy": null,
+            "startDate": '',
+            "endDate": ''
+        })
     }
 }
 

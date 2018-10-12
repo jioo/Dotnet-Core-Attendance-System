@@ -1,17 +1,26 @@
 <template>
     <v-container grid-list-md>
         <v-layout row wrap>
+            <v-flex md6>
+                <v-text-field 
+                    label="Search Name"
+                    prepend-icon="search" 
+                    color="orange" 
+                    v-model="filter.search"></v-text-field>
+            </v-flex>
+        </v-layout>
+
+        <v-layout row wrap>
             <v-flex md4>
                 <v-select 
                     prepend-icon="event" 
                     v-model="presetSelected"
                     color="orange" 
-                    :items="presetDates" 
+                    :items="presetDates"
                     clearable
-                    label="Preset Date" 
+                    label="Preset Date"
                     ></v-select>
             </v-flex>
-
             <v-flex md4>
                 <v-menu
                     ref="menu1"
@@ -66,6 +75,15 @@
                 </v-menu>
             </v-flex>
         </v-layout>
+
+        <v-layout row wrap>
+            <v-flex md4>
+                <v-btn block color="success" @click.prevent="emitEvent()">Apply Filter</v-btn>
+            </v-flex>
+            <v-flex md4>
+                <v-btn block color="grey" @click.prevent="clear()">Clear</v-btn>
+            </v-flex>
+        </v-layout>
     </v-container>
 </template>
 <script>
@@ -74,10 +92,14 @@ import moment from 'moment'
 export default {
     data () {
         return {
+            filter: {
+                startDate: '',
+                endDate: '',
+                search: ''
+            },
             search: '',
             menu1: false,
             menu2: false,
-            filter: {},
             presetSelected: '',
             presetDates: [
                 'Today',
@@ -90,8 +112,35 @@ export default {
                 'Last 6 Month'
             ],
             rule: {
-                startDate: 'required|before:End Date, true|date_format:YYYY-MM-DD',
-                endDate: 'required|after:Start Date, true|date_format:YYYY-MM-DD'
+                startDate: 'before:End Date, true|date_format:YYYY-MM-DD',
+                endDate: 'after:Start Date, true|date_format:YYYY-MM-DD'
+            },
+            delayTimer: 0
+        }
+    },
+
+    methods: {
+        clear () {
+            this.resetFilter()
+            this.emitEvent()
+        },
+
+        emitEvent() {
+            const payload = this.filter
+
+            this.$validator.validateAll().then(() => {
+                // Check if start & end date are valid
+                if (this.errors.items.length === 0) {
+                    this.$emit('onFilter', payload)
+                }
+            })
+        },
+
+        resetFilter() {
+            this.filter = {
+                startDate: '',
+                endDate: '',
+                search: ''
             }
         }
     },
@@ -160,11 +209,15 @@ export default {
                 default:
                     selectedValue = [ '', '']
                     break;
-            }
+            }   
             
             this.filter.startDate = selectedValue[0]
             this.filter.endDate = selectedValue[1]
         }
+    },
+
+    mounted () {
+        this.resetFilter()
     }
 }
 </script>

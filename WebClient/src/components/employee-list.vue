@@ -10,9 +10,18 @@
             <v-text-field append-icon="search" v-model="search" label="Search"
             single-line hide-details></v-text-field>
         </v-card-title>
-        <v-data-table :headers="headers" :items="employees" :search="search" :loading="isLoading" 
-        disable-initial-sort :rows-per-page-items="[10]" :pagination.sync="pagination" hide-actions>
+        
+        <v-data-table 
+            :headers="headers" 
+            :items="employees" 
+            :search="search" 
+            :loading="isLoading" 
+            disable-initial-sort 
+            :rows-per-page-items="[10]" 
+            :pagination.sync="pagination" 
+            hide-actions>
             <v-progress-linear slot="progress" indeterminate></v-progress-linear>
+
             <template slot="items" slot-scope="props">
                 <td>{{ props.item.fullName }}</td>
                 <td>{{ props.item.position }}</td>

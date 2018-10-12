@@ -5,20 +5,19 @@
             <v-spacer></v-spacer>
         </v-toolbar>
         <v-card-title > 
-            <v-container grid-list-md>
-                <v-layout row wrap>
-                    <v-flex md6>
-                        <v-text-field append-icon="search" color="orange" v-model="search" label="Search Name"
-                        single-line hide-details @input="onSearch"></v-text-field>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-            <date-filter />
+            <log-list-filter v-on:onFilter="onFilter" />
         </v-card-title>
-        <!-- -->
-        <v-data-table :items="items" :rows-per-page-items="[10]"  disable-initial-sort  
-        :loading="isLoading" :hide-actions="true" :headers="headers" :pagination.sync="pagination">
+        
+        <v-data-table 
+            :items="items" 
+            :rows-per-page-items="[10]"  
+            disable-initial-sort  
+            :loading="isLoading" 
+            :hide-actions="true" 
+            :headers="headers" 
+            :pagination.sync="pagination">
             <v-progress-linear slot="progress" indeterminate></v-progress-linear>
+
             <template slot="items" slot-scope="props">
                 <td v-if="isRole('Admin')">{{ props.item.fullName }}</td>
 
@@ -38,6 +37,7 @@
                 </td>
             </template>
         </v-data-table>
+        
         <div class="text-xs-center pt-2" >
             <v-pagination v-model="logs.meta.page" :length="pages" :total-visible="7" @input="onPageChange"></v-pagination>
         </div>
@@ -46,21 +46,22 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { FETCH_LOGS } from '@/store/actions-type'
+import { FETCH_LOGS, RESET_META } from '@/store/actions-type'
 import { EventBus } from '@/event-bus.js'
 import BroadcastConnection from '@/services/broadcast-service'
 import moment from 'moment'
-import DateFilter from '@/components/date-filter'
+import LogListFilter from '@/components/log-list-filter'
 
 export default {
     components: {
-        DateFilter
+        LogListFilter
     },
 
     data () {
         return {
             search: '',
             pagination: {},
+            dateFilter: {},
             headers: [],
             items: [],
             gracePeriod: '',
@@ -107,18 +108,15 @@ export default {
             await this.getlist()
         },
 
-        onSearch (val) {
-            // Clears the timer on a call so there is always x seconds in between calls
-            clearTimeout(this.searchDelayTimer);
-            // If the timer resets before it hits 150ms it will not run
-            this.searchDelayTimer = setTimeout(function(){
-                const newMeta = Object.assign({}, this.logs.meta)
-                newMeta.search = val
-                
-                // reset the page to 1 when searching
-                newMeta.page = 1
-                this.getlist(newMeta)
-            }.bind(this), 500);
+        onFilter (payload) {
+            const { startDate, endDate, search } = payload
+            const newMeta = Object.assign({}, this.logs.meta)
+            newMeta.startDate = startDate
+            newMeta.endDate = endDate
+            newMeta.search = search
+            
+            console.log(newMeta)
+            this.getlist(newMeta)
         },
 
         async getlist (newMeta) {
@@ -132,9 +130,10 @@ export default {
 
                     return `${key}=${value}`
                 }).join('&')
-
+            
             await this.$store.dispatch(FETCH_LOGS, metaUrl).then(() => {
                 this.items = this.logs.data
+                console.table(this.items)
 
                 this.headers = [
                     { text: "Employee Name", value: "fullName" },
@@ -145,7 +144,7 @@ export default {
 
                 if(this.isRole('Employee')) {
                     const userId = this.currentUser.user.empId
-                    this.items = this.logs.filter(m => m.employeeId === userId)
+                    this.items = this.logs.data.filter(m => m.employeeId === userId)
                     this.headers = [
                         { text: "Time In", value: "timeIn" },
                         { text: "Time Out", value: "timeOut" }
@@ -226,6 +225,10 @@ export default {
         BroadcastConnection.on("employee-logged", () => {
             this.getlist()
         })
+    },
+
+    created () {
+        this.$store.dispatch(RESET_META)
     }
 }
 </script>
