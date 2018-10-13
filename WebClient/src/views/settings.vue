@@ -1,19 +1,19 @@
-<template lang="html">
-    <v-container fluid fill-height>
+<template>
+    <v-container fluid>
         <v-layout align-center justify-center>
-            <v-flex xs12 sm8 md4>
-                <login />
+            <v-flex md12>
+                <settings />
             </v-flex>
         </v-layout>
     </v-container>
 </template>
 
 <script>
-import Login from '@/components/login'
+import Settings from '@/components/account/settings'
 
 export default {
     components: {
-        Login
+        Settings
     }
 }
 </script>
