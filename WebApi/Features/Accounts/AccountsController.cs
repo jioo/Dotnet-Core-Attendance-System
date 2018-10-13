@@ -31,9 +31,9 @@ namespace WebApi.Features.Accounts
             if(isUsernameExist) return BadRequest($"Username {viewModel.UserName} is already taken");
 
             // Create user account
-            var user = await _mediator.Send(new Register.Command(viewModel));
+            var employeeInfo = await _mediator.Send(new Register.Command(viewModel));
 
-            return new CreatedResult("", null);
+            return new CreatedResult("", employeeInfo);
         }
 
         [Authorize]

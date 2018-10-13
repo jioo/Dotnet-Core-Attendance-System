@@ -1,15 +1,17 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using WebApi.Entities;
+using WebApi.Features.Employees;
 
 namespace WebApi.Features.Accounts
 {
     public class Register
     {
-        public class Command : IRequest<User>
+        public class Command : IRequest<EmployeeViewModel>
         {
             public Command(RegisterViewModel viewModel)
             {
@@ -19,15 +21,17 @@ namespace WebApi.Features.Accounts
             public RegisterViewModel ViewModel { get; }
         }
 
-        public class CommandHandler : IRequestHandler<Command, User>
+        public class CommandHandler : IRequestHandler<Command, EmployeeViewModel>
         {
+            private readonly IMapper _mapper;
             private readonly UserManager<User> _manager;
 
-            public CommandHandler(UserManager<User> manager)
+            public CommandHandler(IMapper mapper, UserManager<User> manager)
             {
+                _mapper = mapper;
                 _manager = manager;
             }
-            public async Task<User> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<EmployeeViewModel> Handle(Command request, CancellationToken cancellationToken)
             {
                 try
                 {
@@ -44,7 +48,7 @@ namespace WebApi.Features.Accounts
                     var result = await _manager.CreateAsync(user, request.ViewModel.Password);
                     await _manager.AddToRoleAsync(user, "Employee");
 
-                    return user;
+                    return _mapper.Map<EmployeeViewModel>(user.Employee);
                 }
                 catch (Exception e)
                 {
