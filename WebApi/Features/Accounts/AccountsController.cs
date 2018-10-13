@@ -37,7 +37,7 @@ namespace WebApi.Features.Accounts
         }
 
         [Authorize]
-        [HttpPost("change-password")]
+        [HttpPut("change-password")]
         public async Task<IActionResult> ChangePassword(UpdatePasswordViewModel viewModel)
         {
             // Check if Old password is correct

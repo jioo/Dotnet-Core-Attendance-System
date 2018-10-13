@@ -32,8 +32,15 @@ namespace WebApi.Features.Logs
             );
         }
 
+        // GET: api/log/{id}
+        [HttpGet("{id:guid}")]
+        public async Task<LogViewModel> Details(Guid id)
+        {
+            return await _mediator.Send(new Details.Query(id));
+        }
+
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> Log(LogInOutViewModel viewModel)
         {

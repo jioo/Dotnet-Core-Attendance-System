@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace WebApi.Features.Auth
 {
@@ -9,15 +10,17 @@ namespace WebApi.Features.Auth
     public class AuthController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IHttpContextAccessor _httpContext;
 
-        public AuthController(IMediator mediator)
+        public AuthController(IMediator mediator, IHttpContextAccessor httpContext)
         {
             _mediator = mediator;
+            _httpContext = httpContext;
         }
 
         // POST api/auth/login
         [HttpPost("login")]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel viewModel)
         {
             // Check if credentials are correct
@@ -36,27 +39,20 @@ namespace WebApi.Features.Auth
             );
         }
 
-        // POST api/auth/check
+        // POST api/challenge/{role}
         [Authorize]
-        [HttpGet("check")]
-        public IActionResult Check()
+        [HttpPost("challenge/{role?}")]
+        public IActionResult ChallengeAuth(string role)
         {
-            return Ok();
-        }
+            if(!string.IsNullOrEmpty(role)) 
+            {
+                var validateRole = _httpContext.HttpContext.User.IsInRole(role);
+                if(!validateRole)
+                {
+                    return Unauthorized();
+                }
+            }
 
-        // POST api/auth/is-admin
-        [Authorize(Roles = "Admin")]
-        [HttpGet("is-admin")]
-        public IActionResult IsAdmin()
-        {
-            return Ok();
-        }
-
-        // POST api/auth/is-employee
-        [Authorize(Roles = "Employee")]
-        [HttpGet("is-employee")]
-        public IActionResult IsEmployee()
-        {
             return Ok();
         }
 

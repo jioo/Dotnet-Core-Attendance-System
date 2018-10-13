@@ -25,7 +25,7 @@ namespace WebApi.Features.Employees
             return await _mediator.Send(new List.Query());
         }
 
-        // GET api/employee/id
+        // GET api/employee/{id}
         [HttpGet("{id:guid}")]
         public async Task<EmployeeViewModel> Details(Guid id)
         {
