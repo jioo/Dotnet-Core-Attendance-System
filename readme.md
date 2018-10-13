@@ -27,10 +27,10 @@ dotnet watch run
 cd WebClient
 
 # Install dependecies
-npm install
+npm i
 
 # Start client dev w/ hot module replacement
-npm run dev
+npm run serve
 ```
 
 ### Features ###
@@ -51,6 +51,7 @@ npm run dev
 * [AutoMapper]() A convention-based object-object mapper.
 * [Microsoft.AspNetCore.SignalR](https://www.nuget.org/packages/Microsoft.AspNetCore.SignalR/) Components for providing real-time bi-directional communication across the Web.
 * [Vue.js](https://vuejs.org/) The Progressive JavaScript Framework.
+* [Vue CLI 3](https://cli.vuejs.org/) Standard Tooling for Vue.js Development.
 * [Vuetify](https://vuetifyjs.com/en/) Material design component framework for Vue.js.
 * [Vuex](https://vuex.vuejs.org/en/intro.html) State management pattern + library for Vue.js.
 * [Vue-Router](https://router.vuejs.org/en/) Vue Router is the official router for Vue.js.
