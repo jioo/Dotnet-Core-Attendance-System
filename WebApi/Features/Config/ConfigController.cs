@@ -5,7 +5,7 @@ using MediatR;
 
 namespace WebApi.Features.Config
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [Route("api/[controller]"), ApiController]
     public class ConfigController : ControllerBase
     {
@@ -24,6 +24,7 @@ namespace WebApi.Features.Config
         }
 
         // PUT api/config
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<ConfigViewModel> Update(ConfigViewModel viewModel)
         {
