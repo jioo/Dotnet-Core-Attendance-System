@@ -48,7 +48,7 @@ namespace WebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Configurations",
+                name: "Config",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -58,7 +58,7 @@ namespace WebApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Configurations", x => x.Id);
+                    table.PrimaryKey("PK_Config", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -285,7 +285,7 @@ namespace WebApi.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Configurations");
+                name: "Config");
 
             migrationBuilder.DropTable(
                 name: "Logs");

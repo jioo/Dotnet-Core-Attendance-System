@@ -1,8 +1,8 @@
 using System;
 
-namespace WebApi.Features.Configurations
+namespace WebApi.Features.Config
 {
-    public class ConfigurationViewModel
+    public class ConfigViewModel
     {
         public Guid Id { get; set; }
         public string TimeIn { get; set; }

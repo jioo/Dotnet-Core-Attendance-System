@@ -13,7 +13,6 @@ namespace WebApi.Infrastructure
 
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Log> Logs { get; set; }
-
-        public DbSet<Configuration> Configurations { get; set; }
+        public DbSet<Config> Config { get; set; }
     }
 }

@@ -6,21 +6,24 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Infrastructure;
 
-namespace WebApi.Features.Configurations
+namespace WebApi.Features.Config
 {
+    /// <summary>
+    /// Update attendance config
+    /// </summary>
     public class Update
     {
-        public class Command : IRequest
+        public class Command : IRequest<ConfigViewModel>
         {
-            public Command(ConfigurationViewModel viewModel)
+            public Command(ConfigViewModel viewModel)
             {
                 ViewModel = viewModel;
             }
 
-            public ConfigurationViewModel ViewModel { get; }
+            public ConfigViewModel ViewModel { get; }
         }
 
-        public class CommandHandler : AsyncRequestHandler<Command>
+        public class CommandHandler : IRequestHandler<Command, ConfigViewModel>
         {
 
             private readonly ApplicationDbContext _context;
@@ -32,15 +35,22 @@ namespace WebApi.Features.Configurations
                 _mapper = mapper;
             }
 
-            protected override async Task Handle(Command request, CancellationToken cancellationToken)
+            public async Task<ConfigViewModel> Handle(Command request, CancellationToken cancellationToken)
             {
                 try
                 {
-                    var model = await _context.Configurations.FindAsync(request.ViewModel.Id);
+                    // Get the old model
+                    var model = await _context.Config.FirstAsync();
+
+                    // Map the view model into old model
                     _mapper.Map(request.ViewModel, model);
 
+                    // Change entity state to update
                     _context.Entry(model).State = EntityState.Modified;
                     await _context.SaveChangesAsync();
+
+                    // Map the result to view model
+                    return _mapper.Map<ConfigViewModel>(model);
                 }
                 catch (Exception e)
                 {

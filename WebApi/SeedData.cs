@@ -62,10 +62,10 @@ namespace WebApi
         {
             var context = services.GetRequiredService<ApplicationDbContext>();
             // Check if configuration already exists
-            if (!context.Configurations.Any())
+            if (!context.Config.Any())
             {
                 // Add default configurations from config file
-                await context.Configurations.AddAsync(new Configuration
+                await context.Config.AddAsync(new Config
                 {
                     TimeIn = configuration["AttendanceConfig:TimeIn"],
                     TimeOut = configuration["AttendanceConfig:TimeOut"],

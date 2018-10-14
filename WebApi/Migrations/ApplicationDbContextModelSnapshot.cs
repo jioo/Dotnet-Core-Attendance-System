@@ -129,7 +129,7 @@ namespace WebApi.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("WebApi.Entities.Configuration", b =>
+            modelBuilder.Entity("WebApi.Entities.Config", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
@@ -142,7 +142,7 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Configurations");
+                    b.ToTable("Config");
                 });
 
             modelBuilder.Entity("WebApi.Entities.Employee", b =>

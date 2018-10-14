@@ -2,7 +2,7 @@ using System;
 
 namespace WebApi.Entities
 {
-    public class Configuration
+    public class Config
     {
         public Guid Id { get; set; }
         public string TimeIn { get; set; }
