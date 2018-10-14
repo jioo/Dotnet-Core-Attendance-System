@@ -9,6 +9,9 @@ using WebApi.Features.Employees;
 
 namespace WebApi.Features.Accounts
 {
+    /// <summary>
+    /// Create employee account
+    /// </summary>
     public class Register
     {
         public class Command : IRequest<EmployeeViewModel>

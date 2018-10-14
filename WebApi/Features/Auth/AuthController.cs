@@ -49,7 +49,7 @@ namespace WebApi.Features.Auth
                 var validateRole = _httpContext.HttpContext.User.IsInRole(role);
                 if(!validateRole)
                 {
-                    return Unauthorized();
+                    return Forbid();
                 }
             }
 

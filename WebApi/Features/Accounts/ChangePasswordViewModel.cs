@@ -1,6 +1,6 @@
 namespace WebApi.Features.Accounts
 {
-    public class UpdatePasswordViewModel 
+    public class ChangePasswordViewModel 
     {
         public string UserName { get; set; }
         public string OldPassword { get; set; }

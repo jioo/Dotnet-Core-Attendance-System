@@ -7,7 +7,7 @@ using MediatR;
 
 namespace WebApi.Features.Accounts
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [Route("api/[controller]"), ApiController]
     public class AccountsController : ControllerBase
     {
@@ -19,6 +19,7 @@ namespace WebApi.Features.Accounts
         }
 
         // POST: api/accounts/register
+        [Authorize(Roles = "Admin")]
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterViewModel viewModel)
         {
@@ -36,16 +37,28 @@ namespace WebApi.Features.Accounts
             return new CreatedResult("", employeeInfo);
         }
 
-        [Authorize]
+        // PUT: api/accounts/update-password
+        [Authorize(Roles = "Admin")]
+        [HttpPut("update-password")]
+        public async Task<IActionResult> UpdatePassword(ChangePasswordViewModel viewModel)
+        {
+            // Change a specific Employee account's password
+            var result = await _mediator.Send(new UpdatePassword.Command(viewModel));
+            if(!result) return StatusCode(500);
+
+            return Ok();
+        }
+        
+        // PUT: api/accounts/change-password
         [HttpPut("change-password")]
-        public async Task<IActionResult> ChangePassword(UpdatePasswordViewModel viewModel)
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel viewModel)
         {
             // Check if Old password is correct
             var validatePassword = await _mediator.Send(new Auth.ValidatePassword.Query(viewModel.UserName, viewModel.OldPassword));
             if (!validatePassword) return BadRequest("Incorrect password");
             
             // Change account password
-            var result = await _mediator.Send(new UpdatePassword.Command(viewModel));
+            var result = await _mediator.Send(new ChangePassword.Command(viewModel));
             if(!result.Succeeded) return BadRequest("Unable to change password");
             
             return Ok();

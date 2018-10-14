@@ -61,8 +61,6 @@ namespace WebApi.Features.Logs
                     var isEmployee = _httpContext.HttpContext.User.IsInRole("Employee");
                     if (isEmployee) 
                     {
-                        // var username = _httpContext.HttpContext.User.FindFirst("sub");
-                        
                         // Get the username in sub type claim
                         var username = _httpContext.HttpContext.User.Claims
                             .First(m => m.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")

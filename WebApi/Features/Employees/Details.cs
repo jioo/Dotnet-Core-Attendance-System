@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using WebApi.Infrastructure;
 
 namespace WebApi.Features.Employees
@@ -45,7 +46,9 @@ namespace WebApi.Features.Employees
                 try
                 {
                     // Find employee, get the Id param from Query
-                    var model =  await _context.Employees.FindAsync(request.Id);
+                    var model =  await _context.Employees
+                        .Include(m => m.Identity)
+                        .FirstAsync(m => m.Id == request.Id);
 
                     // Map model to view model
                     return _mapper.Map<EmployeeViewModel>(model);
