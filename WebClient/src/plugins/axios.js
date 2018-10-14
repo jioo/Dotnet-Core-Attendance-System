@@ -49,12 +49,24 @@ _axios.interceptors.response.use(
     function (error) {
         // Do something with response error
         store.dispatch('LOADING_END')
-        let message = error.response.data || defaultErrorMessage
+        let message = ""
         
-        // Check if response is unauthorized
+        // Get response status code
         const statusCode = error.response.status
-        if (statusCode === 401) {
-            message = "Session has expired"
+        switch(statusCode) {
+            // Unauthenticated user
+            case 401:
+                message = "Session has expired"
+                break;
+            
+            // Unauthorized user
+            case 403:
+                message = "You don't have permission to this page"
+                break;
+
+            default:
+                message = error.response.data || defaultErrorMessage
+                break;
         }
         
         // Global error notification

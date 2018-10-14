@@ -98,11 +98,11 @@ export default {
     },
 
     methods: {
+        
         logout () {
-            this.$store.dispatch('LOGOUT').then(() => {
-                this.$router.push({ name: 'login' })
-            })
+            this.$router.push({ name: 'login' })
         },
+
         isRole(param) {
             if(!this.currentUser) return
 

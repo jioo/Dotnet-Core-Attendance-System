@@ -28,6 +28,7 @@
                 <v-progress-linear slot="progress" indeterminate></v-progress-linear>
 
                 <template slot="items" slot-scope="props">
+                    <td>{{ props.item.identity.userName }}</td>
                     <td>{{ props.item.fullName }}</td>
                     <td>{{ props.item.position }}</td>
                     <td>{{ props.item.cardNo }}</td>
@@ -57,6 +58,7 @@ export default {
             search: "",
             pagination: {},
             headers: [
+                { text: "Username", value: "identity.userName" },
                 { text: "Employee Name", value: "fullName" },
                 { text: "Position", value: "position" },
                 { text: "Card No", value: "cardNo" },
@@ -84,6 +86,12 @@ export default {
 
         async getList () {
             this.items = await this.$axios.get('employee')
+        }
+    },
+
+    watch: {
+        items (val) {
+            this.pagination.totalItems = val.length
         }
     },
 
