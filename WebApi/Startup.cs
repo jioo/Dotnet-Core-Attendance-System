@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,18 +17,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using AutoMapper;
 using Swashbuckle.AspNetCore.Swagger;
-using WebApi.Infrastructures;
+using WebApi.Infrastructure;
 using WebApi.Entities;
-using WebApi.Services;
-using WebApi.Repositories;
-using WebApi.Helpers;
 using Hubs.BroadcastHub;
-using Microsoft.AspNetCore.Antiforgery;
+using MediatR;
+using WebApi.Extensions;
 
 namespace WebApi
 {
@@ -38,16 +32,29 @@ namespace WebApi
         public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
+            Env = env;
         }
 
         public IConfiguration Configuration { get; }
+        public IHostingEnvironment Env { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string SecretKey = Configuration["AppSecret"];
-            // string SecretKey = "141FE29A91D7FA1A13F3C713BB789";
-            SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
+            string secretKey = string.Empty;
+
+            if(Env.IsDevelopment())
+            {
+                // Get secret key from dotnet user secrets.
+                secretKey = Configuration["AppSecret"];
+            }
+            else
+            {
+                // Set up secretkey for production.
+                secretKey = "__YOUR_PRODUCTION_SECRET_KEY__";
+            }
+            
+            SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
 
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -57,13 +64,8 @@ namespace WebApi
                 );
 
             // DI: IoC
-            services.AddScoped<IEmployeeService, EmployeeService>();
-            services.AddScoped<ILogService, LogService>();
-            services.AddScoped<IConfigService, ConfigService>();
-            services.AddScoped(typeof(IContextRepository<>), typeof(ContextRepository<>));
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddSingleton<IJwtService, JwtService>();
-
+            services.AddMediatR(typeof(Startup));
+            
             services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
             // JWT wire up
@@ -121,7 +123,13 @@ namespace WebApi
             .AddDefaultTokenProviders();
 
             services.AddAutoMapper();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(o => 
+            {
+                // Catch cancelled exceptions
+                o.Filters.Add<OperationCancelledExceptionFilter>();
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            
             
             // X-CSRF-Token
             services.AddAntiforgery(options=> 
@@ -227,59 +235,14 @@ namespace WebApi
             });
 
             // Identity user seed
-            CreateUsersAndRoles(services).Wait();
+            SeedData.CreateUsersAndRoles(services, Configuration).Wait();
 
             // Default Attendance Configuration
-            AttendanceConfiguration(services).Wait();
-        }
+            SeedData.AttendanceConfiguration(services, Configuration).Wait();
 
-        private async Task CreateUsersAndRoles(IServiceProvider services)
-        {
-            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = services.GetRequiredService<UserManager<User>>();
-            IdentityResult result;
-
-            // Check if Admin role exists
-            var adminExist = await roleManager.RoleExistsAsync("Admin");
-            if (!adminExist)
+            if (env.IsDevelopment())
             {
-                // Create Admin role
-                result = await roleManager.CreateAsync(new IdentityRole("Admin"));
-
-                // Create Default admin account
-                var user = new User { UserName = Configuration["DefaultAdminCredentials:UserName"] };
-                await userManager.CreateAsync(user, Configuration["DefaultAdminCredentials:Password"]);
-
-                // Assign role
-                await userManager.AddToRoleAsync(user, "Admin");
-            }
-
-            // Check if Employee role exist
-            var employeeExist = await roleManager.RoleExistsAsync("Employee");
-
-            // Create Employee role if does not exist
-            if (!employeeExist) await roleManager.CreateAsync(new IdentityRole("Employee"));
-        }
-
-        private async Task AttendanceConfiguration(IServiceProvider services)
-        {
-            using (var context = services.GetRequiredService<ApplicationDbContext>())
-            {
-                // Check if configuration already exists
-                var isConfigExist = await context.Configurations.OrderBy(m => m.Id).FirstOrDefaultAsync();
-
-                if (isConfigExist == null)
-                {
-                    // Add default configurations from config file
-                    await context.Configurations.AddAsync(new Configuration
-                    {
-                        TimeIn = Configuration["AttendanceConfig:TimeIn"],
-                        TimeOut = Configuration["AttendanceConfig:TimeOut"],
-                        GracePeriod = Configuration["AttendanceConfig:GracePeriod"]
-                    });
-
-                    await context.SaveChangesAsync();
-                }
+                SeedData.EnsureSeedEmployeesAndLogs(services, Configuration).Wait();
             }
         }
     }

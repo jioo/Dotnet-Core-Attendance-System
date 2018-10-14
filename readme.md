@@ -1,6 +1,6 @@
 ## Dotnet-Core-Attendance-System ##
 
-Attendance Web application using .NET Core 2.1 Web Api & Vue.js
+Attendance Web Application using .NET Core 2.1 (CQRS pattern) & Vue.js
 
 Use login: `admin` and password: `123456`
 
@@ -15,7 +15,7 @@ cd WebApi
 dotnet restore 
 
 # Prepare user secret
-dotnet user-secrets set "AppSecret" "__YOU_SECRET_KEY__" 
+dotnet user-secrets set "AppSecret" "__YOUR_SECRET_KEY__" 
 
 # Migrate database
 dotnet ef database update 
@@ -27,18 +27,18 @@ dotnet watch run
 cd WebClient
 
 # Install dependecies
-npm install
+npm i
 
 # Start client dev w/ hot module replacement
-npm run dev
+npm run serve
 ```
 
 ### Features ###
 
-* Fully separate Backend and Frontend
+* Fully separated Backend and Frontend
 * Swagger for api documentation (URL: http://localhost:5000/swagger/index.html)
-* Generic Repository Pattern
-* Authentication based JWT Bearer w/ Identity Framework
+* CQRS Pattern (Command Query Responsibility Segregation)
+* Authentication based on Identity Framework & JWT Bearer
 * Material design
 * Realtime update on employee logs
 
@@ -47,9 +47,11 @@ npm run dev
 * [.NET Core 2.1](https://docs.microsoft.com/en-us/dotnet/core/) open-source general-purpose development platform maintained by Microsoft. 
 * [Entity Framework Core](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore/) lightweight and extensible version of the popular Entity Framework data access technology.
 * [AspNetCore.Identity](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity/) ASP.NET Core Identity is the membership system including membership, login, and user data.
+* [MediatR](https://github.com/jbogard/MediatR) Simple, unambitious mediator implementation in .NET
 * [AutoMapper]() A convention-based object-object mapper.
 * [Microsoft.AspNetCore.SignalR](https://www.nuget.org/packages/Microsoft.AspNetCore.SignalR/) Components for providing real-time bi-directional communication across the Web.
 * [Vue.js](https://vuejs.org/) The Progressive JavaScript Framework.
+* [Vue CLI 3](https://cli.vuejs.org/) Standard Tooling for Vue.js Development.
 * [Vuetify](https://vuetifyjs.com/en/) Material design component framework for Vue.js.
 * [Vuex](https://vuex.vuejs.org/en/intro.html) State management pattern + library for Vue.js.
 * [Vue-Router](https://router.vuejs.org/en/) Vue Router is the official router for Vue.js.

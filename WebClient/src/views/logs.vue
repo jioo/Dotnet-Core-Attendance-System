@@ -1,25 +1,9 @@
 <template>
-    <v-container fluid fill-height>
+    <v-container fluid class="pt-0">
         <v-layout align-center justify-center>
-            <v-flex md12>
-                <log-edit />
-                <log-list />
-            </v-flex>
+            <v-slide-x-transition mode="out-in">
+                <router-view />
+            </v-slide-x-transition>
         </v-layout>
     </v-container>
 </template>
-
-<script>
-import LogList from '@/components/log-list'
-import LogEdit from '@/components/log-edit'
-
-export default {
-    components: {
-        LogList,
-        LogEdit
-    },
-}
-</script>
-
-
-

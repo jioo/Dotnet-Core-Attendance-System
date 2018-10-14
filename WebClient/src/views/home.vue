@@ -2,18 +2,18 @@
     <v-container fluid fill-height>
         <v-layout align-center justify-center>
             <v-flex xs12 sm8 md4>
-                <log-employee-form />
+                <employee-login />
             </v-flex>
         </v-layout>
     </v-container>
 </template>
 
 <script>
-import LogEmployeeForm from '@/components/log-employee-form'
+import EmployeeLogin from '@/components/employee-login'
 
 export default {
     components: {
-        LogEmployeeForm
+        EmployeeLogin
     }
 }
 </script>

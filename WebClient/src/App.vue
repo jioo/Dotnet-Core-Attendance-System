@@ -3,23 +3,22 @@
         <v-app dark>
             <app-header />
             <v-content>
-                <router-view />
+                <v-slide-y-transition mode="out-in">
+                    <router-view />
+                </v-slide-y-transition>
                 <notifications />
             </v-content>
             <app-footer />
-            <!-- <v-footer app>
-                <span>&copy; 2018</span>
-            </v-footer> -->
         </v-app>
     </div>
 </template>
 
 <script>
-import AppHeader from '@/views/app-header'
-import AppFooter from '@/views/app-footer'
+import AppHeader from "@/views/_shared/app-header"
+import AppFooter from "@/views/_shared/app-footer"
 
 export default {
-    name: 'App',
+    name: "App",
     components: {
         AppHeader,
         AppFooter
@@ -30,8 +29,7 @@ export default {
 <style>
     .vue-notification {
         padding: 10px;
-        margin: 12px 5px 0 5px;
+        margin: 5px 5px 0 5px !important;
         font-size: 14px;
     }
 </style>
-
