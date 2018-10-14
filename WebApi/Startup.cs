@@ -32,16 +32,29 @@ namespace WebApi
         public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
+            Env = env;
         }
 
         public IConfiguration Configuration { get; }
+        public IHostingEnvironment Env { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string SecretKey = Configuration["AppSecret"];
-            // string SecretKey = "141FE29A91D7FA1A13F3C713BB789";
-            SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
+            string secretKey = string.Empty;
+
+            if(Env.IsDevelopment())
+            {
+                // Get secret key from dotnet user secrets.
+                secretKey = Configuration["AppSecret"];
+            }
+            else
+            {
+                // Set up secretkey for production.
+                secretKey = "__YOUR_PRODUCTION_SECRET_KEY__";
+            }
+            
+            SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
 
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
