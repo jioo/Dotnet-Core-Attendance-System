@@ -1,6 +1,6 @@
 ## Dotnet-Core-Attendance-System ##
 
-Attendance Web application using .NET Core 2.1 Web Api & Vue.js
+Attendance Web Application using .NET Core 2.1 (CQRS pattern) & Vue.js
 
 Use login: `admin` and password: `123456`
 
@@ -15,7 +15,7 @@ cd WebApi
 dotnet restore 
 
 # Prepare user secret
-dotnet user-secrets set "AppSecret" "__YOU_SECRET_KEY__" 
+dotnet user-secrets set "AppSecret" "__YOUR_SECRET_KEY__" 
 
 # Migrate database
 dotnet ef database update 
@@ -35,10 +35,10 @@ npm run serve
 
 ### Features ###
 
-* Fully separate Backend and Frontend
+* Fully separated Backend and Frontend
 * Swagger for api documentation (URL: http://localhost:5000/swagger/index.html)
 * CQRS Pattern (Command Query Responsibility Segregation)
-* Authentication based JWT Bearer w/ Identity Framework
+* Authentication based on Identity Framework & JWT Bearer
 * Material design
 * Realtime update on employee logs
 
