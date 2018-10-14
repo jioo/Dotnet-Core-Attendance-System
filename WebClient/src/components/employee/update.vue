@@ -67,13 +67,14 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import store from '@/store'
 
 export default {
     data () {
         return {
             valid: false,
             form: {},
-            required: (value) => !!value || 'This field is required.',
+            required: (value) => !!value || 'This field is required.'
         }
     },
 
@@ -98,6 +99,11 @@ export default {
 
     mounted () {
         this.getDetails();
+    },
+
+    beforeRouteLeave (to, from, next) {
+        store.dispatch('DESTROY_KEY')
+        next()
     }
 }
 </script>

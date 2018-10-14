@@ -104,6 +104,7 @@
 import { mapGetters } from 'vuex'
 import { EventBus } from '@/event-bus.js'
 import moment from 'moment'
+import store from '@/store'
 
 export default {
     data () {
@@ -201,6 +202,11 @@ export default {
 
         this.initInDateTime()
         this.initOutDateTime()
+    },
+
+    beforeRouteLeave (to, from, next) {
+        store.dispatch('DESTROY_KEY')
+        next()
     }
 }
 </script>
