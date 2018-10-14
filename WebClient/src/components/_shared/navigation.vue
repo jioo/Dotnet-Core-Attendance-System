@@ -58,7 +58,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile :to="{ name: 'settings' }" v-if="isAuthenticated"
+                <v-list-tile :to="{ name: 'account-settings' }" v-if="isAuthenticated"
                 v-ripple active-class="orange--text" >
                     <v-list-tile-action>
                         <v-icon>settings</v-icon>

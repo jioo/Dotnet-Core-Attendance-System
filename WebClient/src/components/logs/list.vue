@@ -4,6 +4,9 @@
             <v-toolbar dark color="orange">
                 <v-toolbar-title>Logs</v-toolbar-title>
                 <v-spacer></v-spacer>
+                <v-btn large icon :to="{ path: '/logs/settings' }" v-if="isRole('Admin')">
+                    <v-icon large color="white">settings</v-icon>
+                </v-btn>
             </v-toolbar>
 
             <v-card-title> 
@@ -108,11 +111,11 @@ export default {
         },
 
         setDefaultSettings () {
-            const { TimeIn, TimeOut, GracePeriod } = this.settings
+            const { timeIn, timeOut, gracePeriod } = this.settings
             this.config = {
-                gracePeriod: GracePeriod,
-                timeIn: moment(TimeIn, 'LTS').add(GracePeriod, 'm'),
-                timeOut: moment(TimeOut, 'LTS')
+                gracePeriod: gracePeriod,
+                timeIn: moment(timeIn, 'LTS').add(gracePeriod, 'm'),
+                timeOut: moment(timeOut, 'LTS')
             } 
         },
 
@@ -135,7 +138,6 @@ export default {
             newMeta.endDate = endDate
             newMeta.search = search
             
-            console.log(newMeta)
             this.getlist(newMeta)
         },
 

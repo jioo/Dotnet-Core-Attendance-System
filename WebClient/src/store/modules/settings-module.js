@@ -1,9 +1,5 @@
 const state = {
-    settings: {
-        TimeIn: '9:00',
-        TimeOut: '18:00',
-        GracePeriod: '15'
-    }
+    settings: {}
 }
 
 const getters = {
@@ -19,15 +15,21 @@ const mutations = {
     UPDATE_SETTINGS (state, payload) {
         let index = state.settings.findIndex(x => x.Id == payload.Id)
         state.settings.splice(index, 1, payload)
+    },
+    REMOVE_SETTINGS (state) {
+        state.settings = {}
     }
 }
 
 const actions = {
-    FETCH_SETTINGS ({commit}) {
-        commit('SET_SETTINGS', {})
+    SET_SETTINGS ({commit}, payload) {
+        commit('SET_SETTINGS', payload)
     },
-    SETTINGS_EDIT ({commit}, payload) {
+    UPDATE_SETTINGS ({commit}, payload) {
         commit('UPDATE_SETTINGS', payload)
+    },
+    REMOVE_SETTINGS ({commit}) {
+        commit('REMOVE_SETTINGS')
     }
 }
 

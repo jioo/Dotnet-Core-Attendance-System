@@ -45,8 +45,8 @@ export default {
         return {
             valid: false,
             form: {
-                username: 'admin',
-                password: '123456'
+                username: '',
+                password: ''
             },
             required: (value) => !!value || 'This field is required.'
         }
@@ -57,23 +57,30 @@ export default {
     },
 
     methods: {
-        loginUser () {
+        async loginUser () {
             if (this.$refs.form.validate()) {
 
-                this.$axios.post('auth/login', JSON.stringify(this.form)).then((res) => {    
-                    this.$store.dispatch('LOGIN', res)
-                    const currentUserRole = res.user.roles
-                    if(currentUserRole.includes('Admin')) {
-                        this.$router.push({ name: 'employees' })
-                    } else {
-                        this.$router.push({ name: 'logs' })
-                    }
-                })
+                // authenticate user
+                const result = await this.$axios.post('auth/login', JSON.stringify(this.form))
+                await this.$store.dispatch('LOGIN', result)
+                
+                // set up default attendance settings
+                const defaultSettings = await this.$axios.get('config')
+                await this.$store.dispatch('SET_SETTINGS', defaultSettings)
+
+                // redirect according to role
+                const currentUserRole = result.user.roles
+                if(currentUserRole.includes('Admin')) {
+                    this.$router.push({ name: 'employees' })
+                } else {
+                    this.$router.push({ name: 'logs' })
+                }
             }
         },
 
-        logout () {
-            this.$store.dispatch('LOGOUT')
+        async logout () {
+            await this.$store.dispatch('REMOVE_SETTINGS')
+            await this.$store.dispatch('LOGOUT')
         }
     },
 

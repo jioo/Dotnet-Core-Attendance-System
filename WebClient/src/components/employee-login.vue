@@ -51,8 +51,8 @@ export default {
         return {
             valid: false,
             form: {
-                cardno: '123456',
-                password: '123456'
+                cardno: '',
+                password: ''
             },
             required: (value) => !!value || 'This field is required.'
         }

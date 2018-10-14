@@ -81,6 +81,11 @@ const router = new Router({
                     meta: { auth: true } 
                 },
                 { 
+                    path: 'settings', 
+                    component: () => import('./components/logs/settings.vue'), 
+                    meta: { auth: true, roles: ['Admin'] } 
+                },
+                { 
                     path: 'update', 
                     component: () => import('./components/logs/update.vue'), 
                     meta: { auth: true }, 
@@ -102,10 +107,10 @@ const router = new Router({
          * ------------------------------------------------------
          */
         {
-            path: '/settings',
-            name: 'settings',
+            path: '/account-settings',
+            name: 'account-settings',
             meta: { auth: true },
-            component: () => import('@/views/settings')
+            component: () => import('@/views/account-settings')
         }
     ]
 })

@@ -1,6 +1,6 @@
 <template>
     <v-container grid-list-md>
-        <v-layout row wrap>
+        <v-layout row wrap v-if="isRole('Admin')">
             <v-flex md6>
                 <v-text-field 
                     label="Search Name"
@@ -87,6 +87,7 @@
     </v-container>
 </template>
 <script>
+import { mapGetters } from "vuex"
 import moment from 'moment'
 
 export default {
@@ -119,6 +120,10 @@ export default {
         }
     },
 
+    computed: {
+        ...mapGetters(["currentUser"]),
+    },
+
     methods: {
         clear () {
             this.resetFilter()
@@ -134,6 +139,11 @@ export default {
                     this.$emit('onFilter', payload)
                 }
             })
+        },
+
+        isRole (params) {
+            const checkRole = this.currentUser.roles
+            return checkRole.includes(params)
         },
 
         resetFilter() {
