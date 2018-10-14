@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Entities;
 using WebApi.Extensions;
@@ -32,10 +35,17 @@ namespace WebApi.Features.Logs
             private readonly int DEFAULT_PAGE = 1;
             private readonly int DEFAULT_ROWS_PER_PAGE = 10;
             private readonly ApplicationDbContext _context;
+            private readonly IHttpContextAccessor _httpContext;
+            private readonly UserManager<User> _manager;
 
-            public QueryHandler(ApplicationDbContext context)
+            public QueryHandler(
+                ApplicationDbContext context, 
+                IHttpContextAccessor httpContext,
+                UserManager<User> manager)
             {
                 _context = context;
+                _httpContext = httpContext;
+                _manager = manager;
             }
 
             public async Task<Object> Handle(Query request, CancellationToken cancellationToken)
@@ -45,16 +55,38 @@ namespace WebApi.Features.Logs
                     IQueryable<LogViewModel> queryableModel;
                     var startDate = request.Parameters.StartDate;
                     var endDate = request.Parameters.EndDate;
-
-                    // Apply Search filter if not null
                     var searchQuery = request.Parameters.Search;
-                    if(!string.IsNullOrEmpty(searchQuery))
+
+                    // Check if the current user is Employee
+                    var isEmployee = _httpContext.HttpContext.User.IsInRole("Employee");
+                    if (isEmployee) 
+                    {
+                        // var username = _httpContext.HttpContext.User.FindFirst("sub");
+                        
+                        // Get the username in sub type claim
+                        var username = _httpContext.HttpContext.User.Claims
+                            .First(m => m.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
+                            .Value;
+
+                        // Get account details
+                        var account = _context.Users
+                            .Include(m => m.Employee)
+                            .First(m => m.UserName == username);
+
+                        queryableModel = _context.Logs.MapToViewModel()
+                            .Where(m => 
+                                m.EmployeeId == account.Employee.Id &&
+                                m.Deleted == null);
+                    }
+                    // Apply Search filter
+                    else if(!string.IsNullOrEmpty(searchQuery))
                     {
                         queryableModel = _context.Logs.MapToViewModel()
                             .Where(m => 
                                 m.FullName.Contains(searchQuery) &&
                                 m.Deleted == null);
                     }
+                    // Get all List
                     else
                     {
                         queryableModel = _context.Logs.MapToViewModel()
