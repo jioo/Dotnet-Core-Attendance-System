@@ -24,44 +24,54 @@ using WebApi.Entities;
 using Hubs.BroadcastHub;
 using MediatR;
 using WebApi.Extensions;
+using WebApi.Constants;
 
 namespace WebApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IHostingEnvironment environment)
         {
             Configuration = configuration;
-            Env = env;
+            Environment = Environment;
         }
 
         public IConfiguration Configuration { get; }
-        public IHostingEnvironment Env { get; }
+        public IHostingEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string secretKey = string.Empty;
-
-            if(Env.IsDevelopment())
+            // Get key from Constants folder
+            string secretKey = SecretKey.Value;
+            var _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+            
+            // Setup Database connection
+            if(!Environment.IsEnvironment("Test"))
             {
-                // Get secret key from dotnet user secrets.
-                secretKey = Configuration["AppSecret"];
+                services.AddDbContext<ApplicationDbContext>(options =>
+                    // MS SQL database (default)
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+
+                    // MySql database
+                    // https://www.nuget.org/packages/Pomelo.EntityFrameworkCore.MySql
+                    // options.UseMySql(Configuration.GetConnectionString("DefaultConnection"))
+
+                    // MySql database
+                    // https://www.nuget.org/packages/Npgsql.EntityFrameworkCore.PostgreSQL
+                    // options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
+
+                    // See more database provider options:
+                    // https://docs.microsoft.com/en-us/ef/core/providers/
+                );
             }
             else
             {
-                // Set up secretkey for production.
-                secretKey = "__YOUR_PRODUCTION_SECRET_KEY__";
-            }
-            
-            SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
-
-            // Add framework services.
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection"),
-                    b => b.MigrationsAssembly("WebApi"))
+                // Used for Integration Tests
+                services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseInMemoryDatabase("Attendance Test Db")
                 );
+            }
 
             // DI: IoC
             services.AddMediatR(typeof(Startup));
@@ -80,7 +90,7 @@ namespace WebApi
                 options.SigningCredentials = new SigningCredentials(_signingKey, SecurityAlgorithms.HmacSha256);
             });
 
-            var tokenValidationParameters = new TokenValidationParameters
+            var tokEnvironmentalidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
                 ValidIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)],
@@ -104,7 +114,7 @@ namespace WebApi
             }).AddJwtBearer(configureOptions =>
             {
                 configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
-                configureOptions.TokenValidationParameters = tokenValidationParameters;
+                configureOptions.TokenValidationParameters = tokEnvironmentalidationParameters;
                 configureOptions.SaveToken = true;
             });
 
@@ -164,9 +174,9 @@ namespace WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider services)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment Environment, IServiceProvider services)
         {
-            if (env.IsDevelopment())
+            if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
 
@@ -179,10 +189,6 @@ namespace WebApi
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                 });
-            }
-            else
-            {
-                // app.UseHsts();
             }
 
             app.UseExceptionHandler(
@@ -243,7 +249,7 @@ namespace WebApi
             // Default Attendance Configuration
             SeedData.AttendanceConfiguration(services).Wait();
 
-            if (!env.IsProduction())
+            if (!Environment.IsProduction())
             {
                 SeedData.EnsureSeedEmployeesAndLogs(services).Wait();
             }

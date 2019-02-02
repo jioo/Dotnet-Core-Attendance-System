@@ -15,8 +15,9 @@ namespace WebApi
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args)
-            .UseUrls("http://localhost:5000", "http://0.0.0.0:5000")
-            .Build().Run();
+                .UseUrls("http://localhost:5000", "http://0.0.0.0:5000")
+                .Build()
+                .Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
