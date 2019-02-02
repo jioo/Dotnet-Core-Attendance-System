@@ -33,7 +33,7 @@ namespace WebApi
         public Startup(IConfiguration configuration, IHostingEnvironment environment)
         {
             Configuration = configuration;
-            Environment = Environment;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
