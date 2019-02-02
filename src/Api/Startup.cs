@@ -238,14 +238,14 @@ namespace WebApi
             });
 
             // Identity user seed
-            SeedData.CreateUsersAndRoles(services, Configuration).Wait();
+            SeedData.CreateDefaultAdminAndRoles(services).Wait();
 
             // Default Attendance Configuration
-            SeedData.AttendanceConfiguration(services, Configuration).Wait();
+            SeedData.AttendanceConfiguration(services).Wait();
 
-            if (env.IsDevelopment())
+            if (!env.IsProduction())
             {
-                SeedData.EnsureSeedEmployeesAndLogs(services, Configuration).Wait();
+                SeedData.EnsureSeedEmployeesAndLogs(services).Wait();
             }
         }
     }

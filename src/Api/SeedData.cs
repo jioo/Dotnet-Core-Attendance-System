@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using WebApi.Constants;
 using WebApi.Entities;
 using WebApi.Features.Accounts;
 using WebApi.Features.Logs;
@@ -21,16 +22,15 @@ namespace WebApi
         /// Create default admin user and application roles
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configuration"></param>
         /// <returns></returns>
-        public static async Task CreateUsersAndRoles(IServiceProvider services, IConfiguration configuration)
+        public static async Task CreateDefaultAdminAndRoles(IServiceProvider services)
         {
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = services.GetRequiredService<UserManager<User>>();
-            var roles = new string[] { "Admin", "Employee" };
+            var roles = new Roles();
 
             // Add every role from roles if it doesn't exists
-            foreach(var role in roles)
+            foreach(var role in roles.ArrayList)
             {
                 var isRoleExists = await roleManager.RoleExistsAsync(role);
                 if(!isRoleExists)
@@ -40,15 +40,15 @@ namespace WebApi
             }
 
             // Create default admin if it doesn't exists
-            var isDefaultAdminExists = await userManager.FindByNameAsync(configuration["DefaultAdminCredentials:UserName"]);
+            var isDefaultAdminExists = await userManager.FindByNameAsync(DefaultAdmin.UserName);
             if(isDefaultAdminExists == null)
             {
                 // Get the username/password from configuration file
-                var defaultAdmin = new User { UserName = configuration["DefaultAdminCredentials:UserName"] };
-                await userManager.CreateAsync(defaultAdmin, configuration["DefaultAdminCredentials:Password"]);
+                var defaultAdmin = new User { UserName = DefaultAdmin.UserName };
+                await userManager.CreateAsync(defaultAdmin, DefaultAdmin.Password);
 
                 // Add 'Admin' role
-                await userManager.AddToRoleAsync(defaultAdmin, roles[0]);
+                await userManager.AddToRoleAsync(defaultAdmin, roles.Admin);
             }
         }
 
@@ -56,20 +56,20 @@ namespace WebApi
         /// Set up default attendance configuration
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configuration"></param>
         /// <returns></returns>
-        public static async Task AttendanceConfiguration(IServiceProvider services, IConfiguration configuration)
+        public static async Task AttendanceConfiguration(IServiceProvider services)
         {
             var context = services.GetRequiredService<ApplicationDbContext>();
+
             // Check if configuration already exists
             if (!context.Config.Any())
             {
                 // Add default configurations from config file
                 await context.Config.AddAsync(new Config
                 {
-                    TimeIn = configuration["AttendanceConfig:TimeIn"],
-                    TimeOut = configuration["AttendanceConfig:TimeOut"],
-                    GracePeriod = configuration["AttendanceConfig:GracePeriod"]
+                    TimeIn = AttendanceConfig.TimeIn,
+                    TimeOut = AttendanceConfig.TimeOut,
+                    GracePeriod = AttendanceConfig.GracePeriod
                 });
 
                 await context.SaveChangesAsync();
@@ -80,9 +80,8 @@ namespace WebApi
         /// Seed fake employees with logs
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configuration"></param>
         /// <returns></returns>
-        public static async Task EnsureSeedEmployeesAndLogs(IServiceProvider services, IConfiguration configuration)
+        public static async Task EnsureSeedEmployeesAndLogs(IServiceProvider services)
         {
             using (var scope = services.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {  
@@ -91,9 +90,6 @@ namespace WebApi
                     // Check if Employee table is empty
                     if (!context.Employees.Any())
                     {
-                        // Seed Data
-                        Console.WriteLine("Seeding Employee & Log List...");
-
                         // Set fake data for employee
                         var fakeEmployee = new Faker<RegisterViewModel>()
                             .RuleFor(m => m.UserName, f => f.Internet.UserName())
@@ -103,9 +99,9 @@ namespace WebApi
                             .RuleFor(m => m.Position, f => f.Name.JobTitle());
                         
                         // Set up for generating fake logs
-                        var gracePeriod = Convert.ToInt32(configuration["AttendanceConfig:GracePeriod"]) * 2;
-                        var timeInString = $"{DateTime.Today.ToString("d")} {configuration["AttendanceConfig:TimeIn"]}";
-                        var timeOutString = $"{DateTime.Today.ToString("d")} {configuration["AttendanceConfig:TimeOut"]}";
+                        var gracePeriod = Convert.ToInt32(AttendanceConfig.GracePeriod) * 2;
+                        var timeInString = $"{DateTime.Today.ToString("d")} {AttendanceConfig.TimeIn}";
+                        var timeOutString = $"{DateTime.Today.ToString("d")} {AttendanceConfig.TimeOut}";
                         var timeIn = DateTime.ParseExact(timeInString, "MM/dd/yyyy H:mm", null).ToUniversalTime().AddDays(-1);
                         var timeOut = DateTime.ParseExact(timeOutString, "MM/dd/yyyy H:mm", null).ToUniversalTime().AddDays(-1);
 
