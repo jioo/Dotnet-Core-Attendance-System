@@ -87,7 +87,8 @@ namespace WebApi
             {  
                 using(var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>())
                 {
-                    // Employee password
+                    const int NUMBER_OF_EMPLOYEE = 12;
+                    const int NUMBER_OF_LOGS_PER_EMPLOYEE = 7;
                     const string DEFAULT_PASSWORD = "123456";
 
                     // Check if Employee table is empty
@@ -117,7 +118,7 @@ namespace WebApi
                             .RuleFor(m => m.TimeOut, f => f.Date.Between( timeOutRange[0], timeOutRange[1] ));
                         
                         // Generate List of fake employees
-                        var fakeEmployeeList = fakeEmployee.Generate(12);
+                        var fakeEmployeeList = fakeEmployee.Generate(NUMBER_OF_EMPLOYEE);
 
                         // Iterate each fake list
                         foreach(var employee in fakeEmployeeList)
@@ -127,7 +128,7 @@ namespace WebApi
                             var daysToMinus = 0;
 
                             // Generate List of fake logs
-                            var fakeLogList = fakeLog.Generate(7);
+                            var fakeLogList = fakeLog.Generate(NUMBER_OF_LOGS_PER_EMPLOYEE);
                             fakeLogList = fakeLogList.Select(m => 
                             {
                                 m.TimeIn = Convert.ToDateTime(m.TimeIn).AddDays(daysToMinus);
