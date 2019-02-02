@@ -128,7 +128,7 @@ namespace WebApi
                 // Catch cancelled exceptions
                 o.Filters.Add<OperationCancelledExceptionFilter>();
             })
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             
             
             // X-CSRF-Token
@@ -204,10 +204,13 @@ namespace WebApi
 
             // Enable CORS
             app.UseCors(builder =>
-                 builder.AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials()
+                 builder
+                    // from .netcore 2.1 => 2.2 
+                    // .AllowAnyOrigin()
+                    .SetIsOriginAllowed((host) => true)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()
                 );
             
             app.UseAuthentication();
