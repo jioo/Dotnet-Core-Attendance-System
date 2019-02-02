@@ -260,9 +260,5 @@ paket-files/
 __pycache__/
 *.pyc
 
-# Cake Tools
-/tools
-
 .vscode
 /dist
-
