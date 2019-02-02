@@ -15,7 +15,7 @@ const router = new Router({
         {
             path: '/',
             name: 'home',
-            component: () => import('@/views/home')
+            component: () => import('./views/home.vue')
         },
 
         /*
@@ -26,7 +26,7 @@ const router = new Router({
         {
             path: '/login',
             name: 'login',
-            component: () => import('@/views/login')
+            component: () => import('./views/login.vue')
         },
         
         /*
@@ -110,7 +110,7 @@ const router = new Router({
             path: '/account-settings',
             name: 'account-settings',
             meta: { auth: true },
-            component: () => import('@/views/account-settings')
+            component: () => import('./views/account-settings.vue')
         }
     ]
 })
