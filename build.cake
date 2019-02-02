@@ -8,23 +8,22 @@ Task("Build project")
     .Does(() =>
 {
     DotNetCoreBuild("./src/Api");
+    DotNetCoreBuild("./tests/Api");
 });
 
 Task("Run Tests")
     .IsDependentOn("Build project")
     .Does(() =>
 {
-    var projects = GetFiles("./Safe.Test/**/*.csproj");
-    foreach(var project in projects)
-    {
-        DotNetCoreTest(
-            project.FullPath,
-            new DotNetCoreTestSettings()
-            {
-                NoBuild = true
-            }
-        );
-    }
+    var fullPath = "./tests/Api/Test.Api.csproj";
+    DotNetCoreTest(
+        fullPath,
+        new DotNetCoreTestSettings()
+        {
+            NoRestore = true,
+            NoBuild = true,
+        }
+    );
 });
 
 Task("Publish Api project")
@@ -73,6 +72,7 @@ Task("Copy Published client into /wwwroot")
 });
 
 ///////////////////////////////////////////////////////////////////////////////
+
 Task("Build")
     .IsDependentOn("Run Tests")
     .IsDependentOn("Install Client dependencies");
