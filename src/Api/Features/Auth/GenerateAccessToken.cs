@@ -37,7 +37,7 @@ namespace WebApi.Features.Auth
             public CommandHandler(IOptions<JwtIssuerOptions> jwtOptions)
             {
                 _jwtOptions = jwtOptions.Value;
-                AuthExtensions.ThrowIfInvalidOptions(_jwtOptions);
+                Extensions.ThrowIfInvalidOptions(_jwtOptions);
             }
 
             public async Task<object> Handle(Command request, CancellationToken cancellationToken)
@@ -74,7 +74,7 @@ namespace WebApi.Features.Auth
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, userName),
                     new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.JtiGenerator()),
-                    new Claim(JwtRegisteredClaimNames.Iat, AuthExtensions.ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
+                    new Claim(JwtRegisteredClaimNames.Iat, Extensions.ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
                     identity.FindFirst(ClaimTypes.Role)
                 };
 

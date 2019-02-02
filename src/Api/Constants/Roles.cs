@@ -25,6 +25,6 @@ namespace WebApi.Constants
 
         public List<string> ArrayList { get; set; }
         public string Admin { get; set; } = "Admin";
-        public string User { get; set; } = "Employee";
+        public string Employee { get; set; } = "Employee";
     }
 }

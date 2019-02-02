@@ -87,13 +87,16 @@ namespace WebApi
             {  
                 using(var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>())
                 {
+                    // Employee password
+                    const string DEFAULT_PASSWORD = "123456";
+
                     // Check if Employee table is empty
                     if (!context.Employees.Any())
                     {
                         // Set fake data for employee
                         var fakeEmployee = new Faker<RegisterViewModel>()
                             .RuleFor(m => m.UserName, f => f.Internet.UserName())
-                            .RuleFor(m => m.Password, () => "123456")
+                            .RuleFor(m => m.Password, () => DEFAULT_PASSWORD)
                             .RuleFor(m => m.FullName, f => f.Person.FullName)
                             .RuleFor(m => m.CardNo, f => f.Random.Number(10000, 99999).ToString())
                             .RuleFor(m => m.Position, f => f.Name.JobTitle());
@@ -143,9 +146,10 @@ namespace WebApi
                                 Status = Status.Active,
                                 Logs = fakeLogList
                             };
+                            var roles = new Roles();
                             var user = new User { UserName = employee.UserName, Employee = employeeInfo };
-                            await userManager.CreateAsync(user, employee.Password);
-                            await userManager.AddToRoleAsync(user, "Employee");   
+                            await userManager.CreateAsync(user, DEFAULT_PASSWORD);
+                            await userManager.AddToRoleAsync(user, roles.Employee);   
                         }
                     }
                 }

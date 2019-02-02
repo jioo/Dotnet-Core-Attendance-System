@@ -90,12 +90,15 @@ namespace WebApi
                 options.SigningCredentials = new SigningCredentials(_signingKey, SecurityAlgorithms.HmacSha256);
             });
 
+            // Turn off the Validation for Issuer and Audience on Integration Tests
+            var validateIssuerOrAudience = !Environment.IsEnvironment("Test");
+
             var tokEnvironmentalidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
+                ValidateIssuer = validateIssuerOrAudience,
                 ValidIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)],
 
-                ValidateAudience = true,
+                ValidateAudience = validateIssuerOrAudience,
                 ValidAudience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)],
 
                 ValidateIssuerSigningKey = true,

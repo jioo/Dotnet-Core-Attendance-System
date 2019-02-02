@@ -3,7 +3,7 @@ using WebApi.Entities;
 
 namespace WebApi.Features.Auth
 {
-    public static class AuthExtensions
+    public static class Extensions
     {
         /// <summary>
         /// Date converted to seconds since Unix epoch (Jan 1, 1970, midnight UTC).
