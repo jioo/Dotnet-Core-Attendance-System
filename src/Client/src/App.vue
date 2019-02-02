@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import AppHeader from "@/views/_shared/app-header"
-import AppFooter from "@/views/_shared/app-footer"
+import AppHeader from "@/components/_shared/navigation"
+import AppFooter from "@/components/_shared/footer"
 
 export default {
     name: "App",
