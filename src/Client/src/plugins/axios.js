@@ -12,7 +12,7 @@ let config = {
 }
 
 const _axios = axios.create(config)
-const defaultErrorMessage = "An error has occured."
+const defaultErrorMessage = 'An error has occured.'
 
 // Add a request interceptor
 _axios.interceptors.request.use(
@@ -49,19 +49,19 @@ _axios.interceptors.response.use(
     function (error) {
         // Do something with response error
         store.dispatch('LOADING_END')
-        let message = ""
+        let message = ''
         
         // Get response status code
         const statusCode = error.response.status
         switch(statusCode) {
             // Unauthenticated user
             case 401:
-                message = "Session has expired"
+                message = 'Session has expired'
                 break;
             
             // Unauthorized user
             case 403:
-                message = "You don't have permission to this page"
+                message = `You don't have permission to this page`
                 break;
 
             default:

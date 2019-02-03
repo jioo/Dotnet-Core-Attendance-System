@@ -25,7 +25,8 @@
                                     offset-y
                                     full-width
                                     max-width="290px"
-                                    min-width="290px">
+                                    min-width="290px"
+                                >
 
                                     <v-text-field
                                         box
@@ -33,14 +34,16 @@
                                         slot="activator"
                                         v-model="form.timeIn"
                                         label="Time In"
-                                        readonly></v-text-field>
+                                        readonly
+                                    ></v-text-field>
 
                                     <v-time-picker
                                         v-if="menu.timeIn"
                                         v-model="form.timeIn"
                                         full-width
                                         format="24hr"
-                                        @change="$refs.menu.save(form.timeIn)"></v-time-picker>
+                                        @change="$refs.menu.save(form.timeIn)"
+                                    ></v-time-picker>
                                 </v-menu>
                             </v-flex>
                         </v-layout>
@@ -58,7 +61,8 @@
                                     offset-y
                                     full-width
                                     max-width="290px"
-                                    min-width="290px">
+                                    min-width="290px"
+                                >
 
                                     <v-text-field
                                         box
@@ -66,14 +70,16 @@
                                         slot="activator"
                                         v-model="form.timeOut"
                                         label="Time Out"
-                                        readonly></v-text-field>
+                                        readonly
+                                    ></v-text-field>
 
                                     <v-time-picker
                                         v-if="menu.timeOut"
                                         v-model="form.timeOut"
                                         full-width
                                         format="24hr"
-                                        @change="$refs.menu.save(form.timeOut)"></v-time-picker>
+                                        @change="$refs.menu.save(form.timeOut)"
+                                    ></v-time-picker>
                                 </v-menu>
                             </v-flex>
                         </v-layout>
@@ -87,7 +93,8 @@
                                     v-model="form.gracePeriod"
                                     v-validate="'required|numeric|min_value:0|max_value:60'"
                                     data-vv-name="Grace Period"
-                                    :error-messages="errors.collect('Grace Period')"></v-text-field>
+                                    :error-messages="errors.collect('Grace Period')"
+                                ></v-text-field>
                             </v-flex>
                         </v-layout>
                         
@@ -116,7 +123,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(["isLoading", "settings"]),
+        ...mapGetters(['isLoading', 'settings']),
     },
 
     methods: {

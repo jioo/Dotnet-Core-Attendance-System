@@ -6,7 +6,8 @@
                     label="Search Name"
                     prepend-icon="search" 
                     color="orange" 
-                    v-model="filter.search"></v-text-field>
+                    v-model="filter.search"
+                ></v-text-field>
             </v-flex>
         </v-layout>
 
@@ -19,7 +20,7 @@
                     :items="presetDates"
                     clearable
                     label="Preset Date"
-                    ></v-select>
+                ></v-select>
             </v-flex>
             <v-flex md4>
                 <v-menu
@@ -28,7 +29,8 @@
                     v-model="menu1"
                     :return-value.sync="filter.startDate"
                     full-width
-                    min-width="290px">
+                    min-width="290px"
+                >
 
                     <v-text-field
                         ref="Start Date"
@@ -42,9 +44,12 @@
                         data-vv-name="Start Date"
                         data-vv-validate-on="change" 
                         :error-messages="errors.collect('Start Date')" 
-                        ></v-text-field>
+                    ></v-text-field>
 
-                    <v-date-picker v-model="filter.startDate" @input="$refs.menu1.save(filter.startDate)"></v-date-picker>
+                    <v-date-picker 
+                        v-model="filter.startDate" 
+                        @input="$refs.menu1.save(filter.startDate)"
+                    ></v-date-picker>
                 </v-menu>
             </v-flex>
 
@@ -55,7 +60,8 @@
                     v-model="menu2"
                     :return-value.sync="filter.endDate"
                     full-width
-                    min-width="290px">
+                    min-width="290px"
+                >
 
                     <v-text-field
                         ref="End Date"
@@ -69,9 +75,12 @@
                         data-vv-name="End Date" 
                         data-vv-validate-on="change"
                         :error-messages="errors.collect('End Date')"
-                        ></v-text-field>
+                    ></v-text-field>
 
-                    <v-date-picker v-model="filter.endDate" @input="$refs.menu2.save(filter.endDate)"></v-date-picker>
+                    <v-date-picker 
+                        v-model="filter.endDate" 
+                        @input="$refs.menu2.save(filter.endDate)"
+                    ></v-date-picker>
                 </v-menu>
             </v-flex>
         </v-layout>
@@ -86,8 +95,9 @@
         </v-layout>
     </v-container>
 </template>
+
 <script>
-import { mapGetters } from "vuex"
+import { mapGetters } from 'vuex'
 import moment from 'moment'
 
 export default {
@@ -121,7 +131,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(["currentUser"]),
+        ...mapGetters(['currentUser']),
     },
 
     methods: {

@@ -9,92 +9,95 @@
                 <v-spacer></v-spacer>
             </v-toolbar>
             <v-card-text>
-                <v-container grid-list-md>
-                    <v-form ref="form">
-                        <v-layout row wrap>
-                            <v-flex md6>
-                                <v-text-field
-                                    box
-                                    disabled
-                                    label="Name" 
-                                    color="orange"
-                                    v-model="form.fullName"></v-text-field>
-                            </v-flex>
-                        </v-layout>
+                <v-form ref="form" class="mt-4">
+                    <v-layout row wrap>
+                        <v-flex md6>
+                            <v-text-field
+                                box
+                                disabled
+                                label="Name" 
+                                color="orange"
+                                v-model="form.fullName"
+                            ></v-text-field>
+                        </v-flex>
+                    </v-layout>
 
-                        <v-layout row wrap>
-                            <v-flex md3>
+                    <v-layout row wrap>
+                        <v-flex md3>
+                            <v-text-field
+                                box
+                                disabled
+                                slot="activator"
+                                :value="computedInDate"
+                                readonly
+                                label="Time In"
+                            ></v-text-field>
+                        </v-flex>
+                        <v-flex md3>
+                            <v-menu
+                                ref="inTime"
+                                :close-on-content-click="false"
+                                :return-value.sync="inTime"
+                                lazy
+                                transition="scale-transition"
+                            >
                                 <v-text-field
                                     box
-                                    disabled
                                     slot="activator"
-                                    :value="computedInDate"
+                                    :value="computedTimeIn"
                                     readonly
-                                    label="Time In"
                                 ></v-text-field>
-                            </v-flex>
-                            <v-flex md3>
-                                <v-menu
-                                    ref="inTime"
-                                    :close-on-content-click="false"
-                                    :return-value.sync="inTime"
-                                    lazy
-                                    transition="scale-transition">
-                                    <v-text-field
-                                        box
-                                        slot="activator"
-                                        :value="computedTimeIn"
-                                        readonly></v-text-field>
-                                    <v-time-picker v-model="inTime" @change="$refs.inTime.save(inTime)"></v-time-picker>
-                                </v-menu>
-                            </v-flex>
-                        </v-layout>
+                                <v-time-picker v-model="inTime" @change="$refs.inTime.save(inTime)"></v-time-picker>
+                            </v-menu>
+                        </v-flex>
+                    </v-layout>
 
-                        <v-layout row wrap v-if="!toggleTimeOut">
-                            <v-flex md3>
+                    <v-layout row wrap v-if="!toggleTimeOut">
+                        <v-flex md3>
+                            <v-text-field
+                                box
+                                disabled
+                                slot="activator"
+                                :value="computedOutDate"
+                                readonly
+                                label="Time out"
+                            ></v-text-field>
+                        </v-flex>
+                        <v-flex md3>
+                            <v-menu
+                                ref="outTime"
+                                :close-on-content-click="false"
+                                :return-value.sync="outTime"
+                                lazy
+                                transition="scale-transition"
+                            >
                                 <v-text-field
                                     box
-                                    disabled
                                     slot="activator"
-                                    :value="computedOutDate"
+                                    :value="computedOutTime"
                                     readonly
-                                    label="Time out"></v-text-field>
-                            </v-flex>
-                            <v-flex md3>
-                                <v-menu
-                                    ref="outTime"
-                                    :close-on-content-click="false"
-                                    :return-value.sync="outTime"
-                                    lazy
-                                    transition="scale-transition">
-                                    <v-text-field
-                                        box
-                                        slot="activator"
-                                        :value="computedOutTime"
-                                        readonly
-                                        ></v-text-field>
-                                    <v-time-picker v-model="outTime" @change="$refs.outTime.save(outTime)"></v-time-picker>
-                                </v-menu>
-                            </v-flex>
-                        </v-layout>
+                                ></v-text-field>
+                                <v-time-picker v-model="outTime" @change="$refs.outTime.save(outTime)"></v-time-picker>
+                            </v-menu>
+                        </v-flex>
+                    </v-layout>
 
-                        <v-layout row wrap v-else>
-                            <v-flex md6>
-                                <v-text-field disabled label="Time out"></v-text-field>
-                            </v-flex>
-                        </v-layout>
+                    <v-layout row wrap v-else>
+                        <v-flex md6>
+                            <v-text-field disabled label="Time out"></v-text-field>
+                        </v-flex>
+                    </v-layout>
 
-                        <v-layout row wrap>
-                            <v-flex md12>
-                                <v-checkbox v-model="toggleTimeOut" label="Clear Time Out"></v-checkbox>
-                            </v-flex>
-                        </v-layout>
+                    <v-layout row wrap>
+                        <v-flex md12>
+                            <v-checkbox v-model="toggleTimeOut" label="Clear Time Out"></v-checkbox>
+                        </v-flex>
+                    </v-layout>
 
-                        <v-layout row wrap>
-                            <v-btn color="success" :loading="isLoading" @click.prevent="submit">Update</v-btn>
-                        </v-layout>
-                    </v-form>
-                </v-container>
+                    <v-layout row wrap>
+                        <v-btn color="success" :loading="isLoading" @click.prevent="submit">Update</v-btn>
+                    </v-layout>
+                </v-form>
             </v-card-text>
         </v-card>        
     </v-flex>
@@ -119,7 +122,7 @@ export default {
     },
  
     computed: {
-        ...mapGetters(["isLoading", "currentKey"]),
+        ...mapGetters(['isLoading', 'currentKey']),
 
         computedInDate () {
             return this.format('date', this.inDate)

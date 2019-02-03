@@ -13,7 +13,8 @@
                     append-icon="search" 
                     v-model="search" 
                     single-line 
-                    hide-details></v-text-field>
+                    hide-details
+                ></v-text-field>
             </v-card-title>
             
             <v-data-table 
@@ -24,7 +25,8 @@
                 disable-initial-sort 
                 :rows-per-page-items="[10]" 
                 :pagination.sync="pagination" 
-                hide-actions>
+                hide-actions
+            >
                 <v-progress-linear slot="progress" indeterminate></v-progress-linear>
 
                 <template slot="items" slot-scope="props">
@@ -33,7 +35,11 @@
                     <td>{{ props.item.position }}</td>
                     <td>{{ props.item.cardNo }}</td>
                     <td>
-                        <v-btn icon class="mx-0" @click.prevent="update(props.item.id)">
+                        <v-btn 
+                            icon 
+                            class="mx-0" 
+                            @click.prevent="update(props.item.id)"
+                        >
                             <v-icon color="teal">edit</v-icon>
                         </v-btn>
                     </td>
@@ -41,7 +47,11 @@
             </v-data-table>
             
             <div class="text-xs-center pt-2" >
-                <v-pagination v-model="pagination.page" :length="pages" :total-visible="7"></v-pagination>
+                <v-pagination 
+                    v-model="pagination.page" 
+                    :length="pages" 
+                    :total-visible="7"
+                ></v-pagination>
             </div>
         </v-card>
     </v-flex>
@@ -55,20 +65,20 @@ export default {
     data () {
         return {
             items: [],
-            search: "",
+            search: '',
             pagination: {},
             headers: [
-                { text: "Username", value: "identity.userName" },
-                { text: "Employee Name", value: "fullName" },
-                { text: "Position", value: "position" },
-                { text: "Card No", value: "cardNo" },
+                { text: 'Username', value: 'identity.userName' },
+                { text: 'Employee Name', value: 'fullName' },
+                { text: 'Position', value: 'position' },
+                { text: 'Card No', value: 'cardNo' },
                 { text: 'Actions', sortable: false }
             ]
         }
     },
 
     computed: {
-        ...mapGetters(["isLoading"]),
+        ...mapGetters(['isLoading']),
         pages () {
         if (this.pagination.rowsPerPage == null ||
             this.pagination.totalItems == null

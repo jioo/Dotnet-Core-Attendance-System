@@ -20,7 +20,8 @@
                 :loading="isLoading" 
                 :hide-actions="true" 
                 :headers="headers" 
-                :pagination.sync="pagination">
+                :pagination.sync="pagination"
+            >
                 <v-progress-linear slot="progress" indeterminate></v-progress-linear>
 
                 <template slot="items" slot-scope="props">
@@ -28,11 +29,23 @@
 
                     <td v-bind:class="{ red: isLate(props.item.timeIn) }">
                         {{ props.item.timeIn }} &nbsp; 
-                        <v-chip outline color="white" v-if="isLate(props.item.timeIn)" >{{ computeTimeInDiff(props.item.timeIn) }}</v-chip>
+                        <v-chip 
+                            outline 
+                            color="white" 
+                            v-if="isLate(props.item.timeIn)" 
+                        >
+                            {{ computeTimeInDiff(props.item.timeIn) }}
+                        </v-chip>
                     </td>
                     <td v-bind:class="{ green: isUnderTime(props.item.timeOut) }">
                         {{ props.item.timeOut }} &nbsp; 
-                        <v-chip outline color="white" v-if="isUnderTime(props.item.timeOut)" >{{ computeTimeOutDiff(props.item.timeOut) }}</v-chip>
+                        <v-chip 
+                            outline 
+                            color="white" 
+                            v-if="isUnderTime(props.item.timeOut)" 
+                        >
+                            {{ computeTimeOutDiff(props.item.timeOut) }}
+                        </v-chip>
                     </td>
 
                     <td v-if="isRole('Admin')">
@@ -43,14 +56,19 @@
                 </template>
             </v-data-table>
             <div class="text-xs-center pt-2" >
-                <v-pagination v-model="logs.meta.page" :length="pages" :total-visible="7" @input="onPageChange"></v-pagination>
+                <v-pagination 
+                    v-model="logs.meta.page" 
+                    :length="pages" 
+                    :total-visible="7" 
+                    @input="onPageChange"
+                ></v-pagination>
             </div>
         </v-card>
     </v-flex>
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapGetters } from 'vuex'
 import { EventBus } from '@/event-bus.js'
 import ListFilter from './list-filter'
 import BroadcastConnection from '@/services/broadcast-service'
@@ -94,7 +112,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(["currentUser", "settings", "isLoading"]),
+        ...mapGetters(['currentUser', 'settings', 'isLoading']),
         pages () {
             const { rowsPerPage, totalItems } = this.logs.meta
 
@@ -121,13 +139,13 @@ export default {
 
         setDefaultMeta () {
             this.logs.meta = {
-                "search": null,
-                "descending": null,
-                "page": 1,
-                "rowsPerPage": 10,
-                "sortBy": null,
-                "startDate": '',
-                "endDate": ''
+                'search': null,
+                'descending': null,
+                'page': 1,
+                'rowsPerPage': 10,
+                'sortBy': null,
+                'startDate': '',
+                'endDate': ''
             }
         },
 
@@ -166,9 +184,9 @@ export default {
                 this.logs = res
 
                 this.headers = [
-                    { text: "Employee Name", value: "fullName" },
-                    { text: "Time In", value: "timeIn" },
-                    { text: "Time Out", value: "timeOut" },
+                    { text: 'Employee Name', value: 'fullName' },
+                    { text: 'Time In', value: 'timeIn' },
+                    { text: 'Time Out', value: 'timeOut' },
                     { text: 'Actions', sortable: false }
                 ]
 
@@ -176,8 +194,8 @@ export default {
                     const userId = this.currentUser.empId
                     this.items = this.logs.data.filter(m => m.employeeId === userId)
                     this.headers = [
-                        { text: "Time In", value: "timeIn" },
-                        { text: "Time Out", value: "timeOut" }
+                        { text: 'Time In', value: 'timeIn' },
+                        { text: 'Time Out', value: 'timeOut' }
                     ]
                 }
             })
@@ -236,7 +254,7 @@ export default {
             const hours = Math.floor(result / 60)
             let minutes = result % 60
             
-            if (minutes < 10) minutes = ("0" + minutes).slice(-2)
+            if (minutes < 10) minutes = ('0' + minutes).slice(-2)
             
             return `${hours}:${minutes}`
         }
@@ -246,7 +264,7 @@ export default {
         this.getlist()
         this.setDefaultSettings()
 
-        BroadcastConnection.on("employee-logged", () => {
+        BroadcastConnection.on('employee-logged', () => {
             this.getlist()
         })
     },

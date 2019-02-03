@@ -16,8 +16,12 @@
 
                 <v-subheader class="mt-3 grey--text text--darken-1">MAIN NAVIGATION</v-subheader>
 
-                <v-list-tile exact :to="{ name: 'home' }" v-if="!isAuthenticated"
-                v-ripple active-class="orange--text" >
+                <v-list-tile 
+                    exact 
+                    :to="{ name: 'home' }" 
+                    v-if="!isAuthenticated"
+                    v-ripple active-class="orange--text"
+                >
                     <v-list-tile-action>
                         <v-icon>home</v-icon>
                     </v-list-tile-action>
@@ -26,8 +30,11 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile :to="{ name: 'employees' }" v-if="isAuthenticated && isRole('Admin')"
-                v-ripple active-class="orange--text" >
+                <v-list-tile 
+                    :to="{ name: 'employees' }" 
+                    v-if="isAuthenticated && isRole('Admin')"
+                    v-ripple active-class="orange--text" 
+                >
                     <v-list-tile-action>
                         <v-icon>supervisor_account</v-icon>
                     </v-list-tile-action>
@@ -36,8 +43,11 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile :to="{ name: 'logs' }" v-if="isAuthenticated"
-                v-ripple active-class="orange--text" >
+                <v-list-tile 
+                    :to="{ name: 'logs' }" 
+                    v-if="isAuthenticated"
+                    v-ripple active-class="orange--text" 
+                >
                     <v-list-tile-action>
                         <v-icon>list</v-icon>
                     </v-list-tile-action>
@@ -48,8 +58,12 @@
 
                 <v-subheader class="mt-3 grey--text text--darken-1">ACCOUNT</v-subheader>
 
-                <v-list-tile exact :to="{ name: 'login' }" v-if="!isAuthenticated"
-                v-ripple active-class="orange--text" >
+                <v-list-tile 
+                    exact 
+                    :to="{ name: 'login' }" 
+                    v-if="!isAuthenticated"
+                    v-ripple active-class="orange--text" 
+                >
                     <v-list-tile-action>
                         <v-icon>account_circle</v-icon>
                     </v-list-tile-action>
@@ -58,8 +72,11 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile :to="{ name: 'account-settings' }" v-if="isAuthenticated"
-                v-ripple active-class="orange--text" >
+                <v-list-tile 
+                    :to="{ name: 'account-settings' }" 
+                    v-if="isAuthenticated"
+                    v-ripple active-class="orange--text" 
+                >
                     <v-list-tile-action>
                         <v-icon>settings</v-icon>
                     </v-list-tile-action>
@@ -68,8 +85,11 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile @click="logout" v-if="isAuthenticated"
-                v-ripple active-class="orange--text" >
+                <v-list-tile 
+                    @click="logout" 
+                    v-if="isAuthenticated"
+                    v-ripple active-class="orange--text" 
+                >
                     <v-list-tile-action>
                         <v-icon>power_settings_new</v-icon>
                     </v-list-tile-action>
@@ -83,7 +103,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapGetters } from 'vuex'
 import { EventBus } from '@/event-bus.js'
 
 export default {
@@ -94,7 +114,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(["isAuthenticated", "currentUser"])
+        ...mapGetters(['isAuthenticated', 'currentUser'])
     },
 
     methods: {

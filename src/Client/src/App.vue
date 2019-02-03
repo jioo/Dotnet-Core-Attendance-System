@@ -14,11 +14,11 @@
 </template>
 
 <script>
-import AppHeader from "@/components/_shared/navigation"
-import AppFooter from "@/components/_shared/footer"
+import AppHeader from '@/components/_shared/navigation'
+import AppFooter from '@/components/_shared/footer'
 
 export default {
-    name: "App",
+    name: 'App',
     components: {
         AppHeader,
         AppFooter

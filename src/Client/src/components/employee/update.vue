@@ -9,125 +9,142 @@
                 <v-spacer></v-spacer>
             </v-toolbar>
             <v-card-text>
-                <v-container grid-list-md>
-                    <v-form v-model="formStates.form1.isValid" :ref="formStates.form1.name">
+                <v-form v-model="formStates.form1.isValid" :ref="formStates.form1.name">
 
-                        <v-layout row wrap>
-                            <v-flex md12 class="my-4" >
-                                <h2 class="orange--text">Update Information</h2>
-                                <v-divider color="white"></v-divider>
-                                <v-progress-linear :indeterminate="true" class="ma-0" v-show="formStates.form1.isLoading"></v-progress-linear>
-                            </v-flex>
-                        </v-layout>
+                    <v-layout row wrap>
+                        <v-flex md12 class="my-4" >
+                            <h2 class="orange--text">Update Information</h2>
+                            <v-divider color="white"></v-divider>
+                            <v-progress-linear 
+                                class="ma-0" 
+                                :indeterminate="true" 
+                                v-show="formStates.form1.isLoading"
+                            ></v-progress-linear>
+                        </v-flex>
+                    </v-layout>
 
-                        <v-layout row wrap>
-                            <v-flex md6>
-                                <v-text-field
-                                    box
-                                    label="Name" 
-                                    color="orange"
-                                    v-model="form.fullName"
-                                    required 
-                                    :rules="[required]"
-                                    :disabled="!formStates.form1.isEdit"></v-text-field>
-                            </v-flex>
-                            <v-flex md2>
-                                <v-btn icon large dark class="mx-0" 
+                    <v-layout row wrap>
+                        <v-flex md6>
+                            <v-text-field
+                                box
+                                label="Name" 
+                                color="orange"
+                                v-model="form.fullName"
+                                required 
+                                :rules="[required]"
+                                :disabled="!formStates.form1.isEdit"
+                            ></v-text-field>
+                        </v-flex>
+                        <v-flex md2>
+                            <v-btn 
+                                icon large dark 
+                                class="ml-4 mx-0" 
                                 :color="!formStates.form1.isEdit ? 'teal' : 'grey'"
-                                @click.prevent.native="toggleEditState(formStates.form1.name)">
-                                    <v-icon>{{ !formStates.form1.isEdit ? 'edit' : 'close'  }}</v-icon>
-                                </v-btn>
-                            </v-flex>
-                        </v-layout>
+                                @click.prevent.native="toggleEditState(formStates.form1.name)"
+                            >
+                                <v-icon>{{ !formStates.form1.isEdit ? 'edit' : 'close'  }}</v-icon>
+                            </v-btn>
+                        </v-flex>
+                    </v-layout>
 
-                        <v-layout row wrap>
-                             <v-flex md6>
-                                <v-text-field
-                                    box 
-                                    label="Card No"
-                                    color="orange"
-                                    v-model="form.cardNo"
-                                    required 
-                                    :rules="[required]"
-                                    :disabled="!formStates.form1.isEdit"></v-text-field>
-                            </v-flex>
-                        </v-layout>
-
-                        <v-layout row wrap>
+                    <v-layout row wrap>
                             <v-flex md6>
-                                <v-text-field
-                                    box 
-                                    label="Position"
-                                    color="orange"
-                                    v-model="form.position"
-                                    required 
-                                    :rules="[required]"
-                                    :disabled="!formStates.form1.isEdit"></v-text-field>
-                            </v-flex>
-                        </v-layout>
+                            <v-text-field
+                                box 
+                                label="Card No"
+                                color="orange"
+                                v-model="form.cardNo"
+                                required 
+                                :rules="[required]"
+                                :disabled="!formStates.form1.isEdit"
+                            ></v-text-field>
+                        </v-flex>
+                    </v-layout>
 
-                        <v-layout row wrap>
-                            <v-scale-transition>
-                                <v-btn 
-                                    color="success" 
-                                    :loading="formStates.form1.isLoading"
-                                    v-show="formStates.form1.isEdit"
-                                    @click.prevent="submit({
-                                        scope: formStates.form1.name, 
-                                        url: 'employee',
-                                        successMessage: 'Employee Information has been successfully updated!'
-                                    })">Submit</v-btn>
-                            </v-scale-transition>
-                        </v-layout>
-                    </v-form>
+                    <v-layout row wrap>
+                        <v-flex md6>
+                            <v-text-field
+                                box 
+                                label="Position"
+                                color="orange"
+                                v-model="form.position"
+                                required 
+                                :rules="[required]"
+                                :disabled="!formStates.form1.isEdit"
+                            ></v-text-field>
+                        </v-flex>
+                    </v-layout>
 
-                    <v-form v-model="formStates.form2.isValid" :ref="formStates.form2.name">
+                    <v-layout row wrap>
+                        <v-scale-transition>
+                            <v-btn 
+                                color="success" 
+                                :loading="formStates.form1.isLoading"
+                                v-show="formStates.form1.isEdit"
+                                @click.prevent="submit({
+                                    scope: formStates.form1.name, 
+                                    url: 'employee',
+                                    successMessage: 'Employee Information has been successfully updated!'
+                                })"
+                            >Submit</v-btn>
+                        </v-scale-transition>
+                    </v-layout>
+                </v-form>
 
-                        <v-layout row wrap>
-                            <v-flex md12 class="my-4" >
-                                <h2 class="orange--text">Update Password</h2>
-                                <v-divider color="white"></v-divider>
-                                <v-progress-linear :indeterminate="true" class="ma-0" v-show="formStates.form2.isLoading"></v-progress-linear>
-                            </v-flex>
-                        </v-layout>
+                <v-form v-model="formStates.form2.isValid" :ref="formStates.form2.name">
 
-                        <v-layout row wrap>
-                            <v-flex md6>
-                                <v-text-field
-                                    box 
-                                    label="New Password"
-                                    type="Password"
-                                    color="orange"
-                                    v-model="form.newPassword"
-                                    required 
-                                    :rules="[required, minLength]"
-                                    :disabled="!formStates.form2.isEdit"></v-text-field>
-                            </v-flex>
-                            <v-flex md2>
-                                <v-btn icon large dark class="mx-0" 
-                                :color="!formStates.form2.isEdit ? 'teal' : 'grey'"
-                                @click.prevent.native="toggleEditState(formStates.form2.name)">
-                                    <v-icon>{{ !formStates.form2.isEdit ? 'edit' : 'close'  }}</v-icon>
-                                </v-btn>
-                            </v-flex>
-                        </v-layout>
+                    <v-layout row wrap>
+                        <v-flex md12 class="my-4" >
+                            <h2 class="orange--text">Update Password</h2>
+                            <v-divider color="white"></v-divider>
+                            <v-progress-linear 
+                                class="ma-0"
+                                :indeterminate="true"  
+                                v-show="formStates.form2.isLoading"
+                            ></v-progress-linear>
+                        </v-flex>
+                    </v-layout>
 
-                        <v-layout row wrap>
-                            <v-scale-transition>
-                                <v-btn 
-                                    color="success" 
-                                    :loading="formStates.form2.isLoading"
-                                    v-show="formStates.form2.isEdit"
-                                    @click.prevent="submit({
-                                        scope: formStates.form2.name, 
-                                        url: 'accounts/update-password',
-                                        successMessage: 'Password has been successfully updated!'
-                                    })">Submit</v-btn>
-                            </v-scale-transition>
-                        </v-layout>
+                    <v-layout row wrap>
+                        <v-flex md6>
+                            <v-text-field
+                                box 
+                                label="New Password"
+                                type="Password"
+                                color="orange"
+                                v-model="form.newPassword"
+                                required 
+                                :rules="[required, minLength]"
+                                :disabled="!formStates.form2.isEdit"
+                            ></v-text-field>
+                        </v-flex>
+                        <v-flex md2>
+                            <v-btn icon large dark class="ml-4 mx-0" 
+                            :color="!formStates.form2.isEdit ? 'teal' : 'grey'"
+                            @click.prevent.native="toggleEditState(formStates.form2.name)">
+                                <v-icon>{{ !formStates.form2.isEdit ? 'edit' : 'close'  }}</v-icon>
+                            </v-btn>
+                        </v-flex>
+                    </v-layout>
 
-                    </v-form>
-                </v-container>
+                    <v-layout row wrap>
+                        <v-scale-transition>
+                            <v-btn 
+                                color="success" 
+                                :loading="formStates.form2.isLoading"
+                                v-show="formStates.form2.isEdit"
+                                @click.prevent="submit({
+                                    scope: formStates.form2.name, 
+                                    url: 'accounts/update-password',
+                                    successMessage: 'Password has been successfully updated!'
+                                })"
+                            >
+                                Submit
+                            </v-btn>
+                        </v-scale-transition>
+                    </v-layout>
+
+                </v-form>
             </v-card-text>
         </v-card>
     </v-flex>
@@ -165,7 +182,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(["isLoading", "currentKey"])
+        ...mapGetters(['isLoading', 'currentKey'])
     },
 
     methods: {

@@ -125,7 +125,7 @@ router.beforeEach((to, from, next) => {
     if (to.matched.some(m => m.meta.auth)) {
         
         // check if the route needs a specific role
-        let requiredRole = ""
+        let requiredRole = ''
         if (to.matched.some(m => m.meta.roles)) {
             requiredRole = to.meta.roles
         }
