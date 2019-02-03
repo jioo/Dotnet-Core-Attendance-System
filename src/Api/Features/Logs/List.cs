@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using LinqKit;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApi.Entities;
 using WebApi.Extensions;
 using WebApi.Infrastructure;
+using X.PagedList;
 
 namespace WebApi.Features.Logs
 {
@@ -52,106 +55,60 @@ namespace WebApi.Features.Logs
             {
                 try
                 {
-                    IQueryable<LogViewModel> queryableModel;
                     var startDate = request.Parameters.StartDate;
                     var endDate = request.Parameters.EndDate;
                     var searchQuery = request.Parameters.Search;
+                    
+                    // Build dynamic clause
+                    var predicate = PredicateBuilder.New<LogViewModel>(true); // true -where(true) return all
+                    predicate = predicate.And(m => m.Deleted == null);
 
-                    // Check if the current user is Employee
+                    // Apply search filter if any
+                    if (String.IsNullOrWhiteSpace(searchQuery) == false)
+                    {
+                        var searchTerms = searchQuery.Split(' ').ToList().ConvertAll(x => x.ToLower());
+                        predicate = predicate.And(m => searchTerms.Any(key => m.FullName.ToLower().Contains(key)));
+                    }
+
+                    // Apply employee filter if account has `Employee` role
                     var isEmployee = _httpContext.HttpContext.User.IsInRole("Employee");
                     if (isEmployee) 
                     {
-                        // Get the username in sub type claim
-                        var username = _httpContext.HttpContext.User.Claims
-                            .First(m => m.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
-                            .Value;
+                        // Get the username in identity claims
+                        var username = _httpContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                         // Get account details
-                        var account = _context.Users
-                            .Include(m => m.Employee)
-                            .First(m => m.UserName == username);
-
-                        queryableModel = _context.Logs.MapToViewModel()
-                            .Where(m => 
-                                m.EmployeeId == account.Employee.Id &&
-                                m.Deleted == null);
-                    }
-                    // Apply Search filter
-                    else if(!string.IsNullOrEmpty(searchQuery))
-                    {
-                        queryableModel = _context.Logs.MapToViewModel()
-                            .Where(m => 
-                                m.FullName.Contains(searchQuery) &&
-                                m.Deleted == null);
-                    }
-                    // Get all List
-                    else
-                    {
-                        queryableModel = _context.Logs.MapToViewModel()
-                            .Where(m => m.Deleted == null);
+                        var account = _context.Users.Include(m => m.Employee).First(m => m.UserName == username);
+                        
+                        predicate = predicate.And(m => m.EmployeeId == account.Employee.Id);
                     }
 
                     // Apply Date filter
                     if (startDate != null && endDate != null)
                     {
                         endDate = Convert.ToDateTime(endDate).AddHours(23).AddMinutes(59);
-                        queryableModel = queryableModel.Where(m => Convert.ToDateTime(m.TimeIn) >= startDate && Convert.ToDateTime(m.TimeIn) <= endDate);
+                        predicate = predicate.And(m => Convert.ToDateTime(m.TimeIn) >= startDate && Convert.ToDateTime(m.TimeIn) <= endDate);
                     }
 
-                    // Handle sortable columns
-                    if(!string.IsNullOrEmpty(request.Parameters.SortBy) &&
-                       request.Parameters.Descending != null)
-                    {
-                        var isDescending = (bool) request.Parameters.Descending;
-
-                        /// <summary>
-                        /// TODO: Fix <see cref="Extensions.SortExtensions" /> to refactor this switch statement.
-                        /// </summary>
-                        switch (request.Parameters.SortBy)
-                        {
-                            case "fullName":
-                                // queryableModel.CustomSort(m => m.FullName, isDescending);
-                                queryableModel = (isDescending)
-                                    ? queryableModel.OrderByDescending(m => m.FullName)
-                                    : queryableModel.OrderBy(m => m.FullName);
-                                break;
-
-                            case "timeIn":
-                                queryableModel = (isDescending)
-                                    ? queryableModel.OrderByDescending(m => m.TimeIn)
-                                    : queryableModel.OrderBy(m => m.TimeIn);
-                                break;
-
-                            case "timeOut":
-                                queryableModel = (isDescending)
-                                        ? queryableModel.OrderByDescending(m => m.TimeOut)
-                                        : queryableModel.OrderBy(m => m.TimeOut);
-                                break;
-
-                            default:
-                                queryableModel.OrderByDescending(m => m.Created);
-                                break;
-                        }
-
-                        // queryableModel.CustomSort(
-                        //     isDescending, 
-                        //     request.Parameters.SortBy,
-                        //     m => m.FullName,
-                        //     m => m.TimeIn,
-                        //     m => m.TimeOut);
-                    }
+                    var isDescending = request.Parameters.Descending ?? false;
 
                     // Use default value if null
                     request.Parameters.Page = request.Parameters.Page ?? DEFAULT_PAGE;
                     request.Parameters.RowsPerPage = request.Parameters.RowsPerPage ?? DEFAULT_ROWS_PER_PAGE;
 
                     // Count total items
-                    request.Parameters.TotalItems = queryableModel.Count();
+                    request.Parameters.TotalItems = _context.Logs.MapToViewModel().Where(predicate).Count();
 
-                    // Paginated list
-                    var result = await queryableModel
-                        .ToPagedList(request.Parameters)
-                        .OrderByDescending(m => m.Created)
+                    // Parse parameters to int
+                    var pageSize = Convert.ToInt32(request.Parameters.RowsPerPage);
+                    var pageNumber = Convert.ToInt32(request.Parameters.Page);
+
+                    var result = await _context.Logs
+                        .AsExpandable()
+                        .MapToViewModel()
+                        .Where(predicate)
+                        .ApplySort(request.Parameters)
+                        .ToPagedList(pageNumber, pageSize)
                         .ToListAsync(cancellationToken);
 
                     return new 
