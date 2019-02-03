@@ -11,8 +11,7 @@ Task("Build project")
     DotNetCoreBuild("./tests/Api");
 });
 
-Task("Run Tests")
-    .IsDependentOn("Build project")
+Task("Run Test")
     .Does(() =>
 {
     var fullPath = "./tests/Api/Test.Api.csproj";
@@ -27,7 +26,7 @@ Task("Run Tests")
 });
 
 Task("Publish Api project")
-    .IsDependentOn("Build project")
+    .IsDependentOn("Run Test")
     .Does(() =>
 {
     var settings = new DotNetCorePublishSettings
@@ -74,10 +73,12 @@ Task("Copy Published client into /wwwroot")
 ///////////////////////////////////////////////////////////////////////////////
 
 Task("Build")
-    .IsDependentOn("Run Tests")
+    .IsDependentOn("Build project")
+    .IsDependentOn("Run Test")
     .IsDependentOn("Install Client dependencies");
 
 Task("Publish")
+    .IsDependentOn("Build project")
     .IsDependentOn("Publish Api project")
     .IsDependentOn("Publish Client")
     .IsDependentOn("Copy Published client into /wwwroot");
