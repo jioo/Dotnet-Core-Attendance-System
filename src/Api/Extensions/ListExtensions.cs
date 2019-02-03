@@ -30,7 +30,7 @@ namespace WebApi.Extensions
             }
 
             // Default sorting
-            return queryable.OrderBy(m => GetPropValue(m, "Created"));
+            return queryable.OrderByDescending(m => GetPropValue(m, "Created"));
         }
 
         /// <summary>
