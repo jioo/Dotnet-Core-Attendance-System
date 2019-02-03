@@ -83,4 +83,8 @@ Task("Publish")
     .IsDependentOn("Publish Client")
     .IsDependentOn("Copy Published client into /wwwroot");
 
+Task("Api Publish")
+    .IsDependentOn("Build project")
+    .IsDependentOn("Publish Api project");
+
 RunTarget(task);
