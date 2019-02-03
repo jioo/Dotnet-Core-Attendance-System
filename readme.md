@@ -76,5 +76,8 @@ dotnet-cake build.cake --task="Publish"
 
 ### Online Resources ###
 
+* [https://docs.microsoft.com/en-us/aspnet/core](https://docs.microsoft.com/en-us/aspnet/core)
+* [https://vuejs.org/](https://vuejs.org/)
+* [https://vuetifyjs.com](https://vuetifyjs.com)
 * [https://github.com/gothinkster/aspnetcore-realworld-example-app](https://github.com/gothinkster/aspnetcore-realworld-example-app)
 * [https://medium.com/@ozgurgul/asp-net-core-2-0-webapi-jwt-authentication-with-identity-mysql-3698eeba6ff8](https://medium.com/@ozgurgul/asp-net-core-2-0-webapi-jwt-authentication-with-identity-mysql-3698eeba6ff8)
