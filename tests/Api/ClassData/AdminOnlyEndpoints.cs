@@ -9,6 +9,8 @@ namespace Test.Api.ClassData
     {
         public IEnumerator<object[]> GetEnumerator()
         {
+            yield return new object[] { HttpMethod.Post, "api/accounts/register" };
+            yield return new object[] { HttpMethod.Put, "api/accounts/update-password" };
             yield return new object[] { HttpMethod.Put, "api/config" };
             yield return new object[] { HttpMethod.Get, "api/employee" };
             yield return new object[] { HttpMethod.Get, $"api/employee/{Guid.NewGuid()}" };

@@ -27,6 +27,7 @@ namespace Test.Api.Utils
         {
             var token = await GetJwt(fixture, viewModel);
             
+            fixture.Client.DefaultRequestHeaders.Remove("Authorization");
             fixture.Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
         }
 
