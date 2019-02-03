@@ -19,6 +19,24 @@ namespace WebApi
     public static class SeedData
     {
         /// <summary>
+        /// Database migration
+        /// </summary>
+        /// <param name="services"></param>
+        public static void InitializeDatabase(IServiceProvider services)
+        {
+            using (IServiceScope serviceScope = services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+			{
+				using (var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>())
+				{
+                    if (!context.Database.CanConnect() && !context.Database.IsInMemory())
+                    {
+                        context.Database.Migrate();
+                    }
+				}
+			}
+        }
+
+        /// <summary>
         /// Create default admin user and application roles
         /// </summary>
         /// <param name="services"></param>

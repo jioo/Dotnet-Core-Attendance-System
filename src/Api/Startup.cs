@@ -246,6 +246,9 @@ namespace WebApi
                 routes.MapHub<BroadcastHub>("/broadcast");
             });
 
+            // Automatic database migration
+            SeedData.InitializeDatabase(services);
+
             // Identity user seed
             SeedData.CreateDefaultAdminAndRoles(services).Wait();
 
