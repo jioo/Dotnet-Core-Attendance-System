@@ -64,7 +64,8 @@ dotnet-cake build.cake --task="Publish"
 * Authentication based on Identity Framework & JWT Bearer
 * Material design
 * Realtime update on employee logs
-![Realtime Demo](realtime-demo.gif)
+* ![Realtime Demo](realtime-demo.gif)
+
 
 ### Includes ###
 
