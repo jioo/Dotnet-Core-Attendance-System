@@ -73,3 +73,8 @@ dotnet-cake build.cake --task="Publish"
 * [MediatR](https://github.com/jbogard/MediatR) Simple, unambitious mediator implementation in .NET
 * [Vue.js](https://vuejs.org/) The Progressive JavaScript Framework.
 * [Vuetify](https://vuetifyjs.com/en/) Material design component framework for Vue.js.
+
+### Online Resources ###
+
+* [https://github.com/gothinkster/aspnetcore-realworld-example-app](https://github.com/gothinkster/aspnetcore-realworld-example-app)
+* [https://medium.com/@ozgurgul/asp-net-core-2-0-webapi-jwt-authentication-with-identity-mysql-3698eeba6ff8](https://medium.com/@ozgurgul/asp-net-core-2-0-webapi-jwt-authentication-with-identity-mysql-3698eeba6ff8)
