@@ -1,0 +1,19 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: microsoft/dotnet:2.2-sdk
+    steps:
+      - checkout
+      - run:
+          name: Install Cake
+          command: |
+            dotnet tool install -g Cake.Tool
+            echo 'export PATH=$PATH:/root/.dotnet/tools' >> $BASH_ENV
+            source $BASH_ENV
+      - run:
+          name: Build
+          command: dotnet cake build.cake --task="Build project"
+      - run:
+          name: Test
+          command: dotnet cake build.cake --task="Run Test"

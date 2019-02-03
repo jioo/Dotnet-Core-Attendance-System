@@ -1,36 +1,59 @@
 ## Dotnet-Core-Attendance-System ##
 
-Attendance Web Application using .NET Core 2.1 (CQRS pattern) & Vue.js
+Attendance Web Application using .NET Core (CQRS pattern) & Vue.js
 
-Use login: `admin` and password: `123456`
+### Circle CI ###
 
-### Installation ###
+[![CircleCI](https://circleci.com/gh/jioo/Dotnet-Core-Attendance-System.svg?style=svg)](https://circleci.com/gh/jioo/Dotnet-Core-Attendance-System)
+
+### Prerequisite ###
+1. Install .Net Core 2.2 SDK [https://dotnet.microsoft.com/download](https://dotnet.microsoft.com/download)
+2. Install Node.js [https://nodejs.org/en/download/](https://nodejs.org/en/download/)
+3. Any relational database provider. See list at: [https://docs.microsoft.com/en-us/ef/core/providers/](https://docs.microsoft.com/en-us/ef/core/providers/)
+    - Note: MSSQL is the default provider in the source code.
+
+### Build ###
+```bash
+# Install Cake global tool first
+dotnet tool install -g Cake.Tool
+
+# Run build.cake
+# - this task build Api & Test .net core project
+# and install packages in Vue client
+dotnet-cake build.cake
 ```
-git clone https://github.com/jioo/Dotnet-Core-Attendance-System.git
 
-# Navigate to Web Api folder
-cd WebApi
+### Run ###
+- Api project
+```bash
+cd .\src\Api\
 
-# Restore NuGet packages
-dotnet restore 
+# Run 
+dotnet run
 
-# Prepare user secret
-dotnet user-secrets set "AppSecret" "__YOUR_SECRET_KEY__" 
-
-# Migrate database
-dotnet ef database update 
-
-# Start server w/ file watcher
+# or Run with file watcher
 dotnet watch run
+```
+- Vue client
+    - Use login: `admin` and password: `123456`
+```bash
+cd .\src\Api\
 
-# Navigate to Web Client folder
-cd WebClient
-
-# Install dependecies
-npm i
-
-# Start client dev w/ hot module replacement
+# Start dev w/ hot module replacement
 npm run serve
+```
+- Integration Tests
+```bash
+cd .\tests\Api\
+
+# Run tests 
+dotnet test
+```
+
+### Local Publish ###
+```bash
+# Publish .net core api and vue in `/dist` folder
+dotnet-cake build.cake --task="Publish"
 ```
 
 ### Features ###
@@ -41,19 +64,20 @@ npm run serve
 * Authentication based on Identity Framework & JWT Bearer
 * Material design
 * Realtime update on employee logs
+* ![Realtime Demo](realtime-demo.gif)
+
 
 ### Includes ###
 
-* [.NET Core 2.1](https://docs.microsoft.com/en-us/dotnet/core/) open-source general-purpose development platform maintained by Microsoft. 
-* [Entity Framework Core](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore/) lightweight and extensible version of the popular Entity Framework data access technology.
-* [AspNetCore.Identity](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity/) ASP.NET Core Identity is the membership system including membership, login, and user data.
+* [.NET Core](https://docs.microsoft.com/en-us/dotnet/core/) open-source general-purpose development platform maintained by Microsoft. 
 * [MediatR](https://github.com/jbogard/MediatR) Simple, unambitious mediator implementation in .NET
-* [AutoMapper]() A convention-based object-object mapper.
-* [Microsoft.AspNetCore.SignalR](https://www.nuget.org/packages/Microsoft.AspNetCore.SignalR/) Components for providing real-time bi-directional communication across the Web.
 * [Vue.js](https://vuejs.org/) The Progressive JavaScript Framework.
-* [Vue CLI 3](https://cli.vuejs.org/) Standard Tooling for Vue.js Development.
 * [Vuetify](https://vuetifyjs.com/en/) Material design component framework for Vue.js.
-* [Vuex](https://vuex.vuejs.org/en/intro.html) State management pattern + library for Vue.js.
-* [Vue-Router](https://router.vuejs.org/en/) Vue Router is the official router for Vue.js.
-* [Axios](https://github.com/axios/axios) Promise based HTTP client for the browser and node.js.
-* [@aspnet/signalr](https://github.com/aspnet/SignalR) JavaScript and TypeScript clients for SignalR for ASP.NET Core
+
+### Online Resources ###
+
+* [https://docs.microsoft.com/en-us/aspnet/core](https://docs.microsoft.com/en-us/aspnet/core)
+* [https://vuejs.org/](https://vuejs.org/)
+* [https://vuetifyjs.com](https://vuetifyjs.com)
+* [https://github.com/gothinkster/aspnetcore-realworld-example-app](https://github.com/gothinkster/aspnetcore-realworld-example-app)
+* [https://medium.com/@ozgurgul/asp-net-core-2-0-webapi-jwt-authentication-with-identity-mysql-3698eeba6ff8](https://medium.com/@ozgurgul/asp-net-core-2-0-webapi-jwt-authentication-with-identity-mysql-3698eeba6ff8)
