@@ -34,7 +34,6 @@ namespace WebApi.Features.Employees
         
         // PUT api/employee
         [HttpPut]
-        [AllowAnonymous]
         public async Task<IActionResult> Update(EmployeeViewModel model)
         {
             // Check if Card No already exists

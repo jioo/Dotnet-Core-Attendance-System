@@ -33,6 +33,7 @@ namespace WebApi.Features.Logs
         }
 
         // GET: api/log/{id}
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id:guid}")]
         public async Task<LogViewModel> Details(Guid id)
         {
@@ -46,8 +47,8 @@ namespace WebApi.Features.Logs
         {
             // Validate card no. & password
             var user = await _mediator.Send(new ValidateTimeInOut.Query(viewModel));
-            if (user.Id == Guid.Empty) 
-                return BadRequest("Invalid username or password!");
+            if (user == null) 
+                return BadRequest("Invalid card no. or password!");
 
             // Broadcast to web client
             await _hubContext.Clients.All.SendAsync("employee-logged"); 
@@ -61,9 +62,14 @@ namespace WebApi.Features.Logs
         // PUT api/log
         [Authorize(Roles = "Admin")]
         [HttpPut]
-        public async Task<LogViewModel> Update(LogEditViewModel model)
+        public async Task<ActionResult<LogViewModel>> Update(LogEditViewModel model)
         {
-            return await _mediator.Send(new Update.Command(model));
+            var result = await _mediator.Send(new Update.Command(model));
+
+            if (result == null)
+                return BadRequest();
+
+            return result;
         }
     }
 }

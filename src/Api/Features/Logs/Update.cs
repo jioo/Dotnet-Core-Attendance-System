@@ -42,7 +42,11 @@ namespace WebApi.Features.Logs
             {
                 try
                 {
-                    var model = await _context.Logs.FindAsync(request.ViewModel.Id);
+                    var model = await _context.Logs.FirstOrDefaultAsync(m => m.Id == request.ViewModel.Id);
+
+                    // Validate model
+                    if (model == null)
+                        return null;
 
                     // Convert datetime to UTC before updating
                     request.ViewModel.TimeIn = LogExtensions.ToUtc(request.ViewModel.TimeIn.ToString());
@@ -50,7 +54,9 @@ namespace WebApi.Features.Logs
                         ? LogExtensions.ToUtc(request.ViewModel.TimeOut.ToString())
                         : request.ViewModel.TimeOut;
                     
-                    _mapper.Map(request.ViewModel, model);
+                    // Update specifc fields only
+                    model.TimeIn = request.ViewModel.TimeIn;
+                    model.TimeOut = request.ViewModel.TimeOut;
                     model.Updated = DateTime.UtcNow;
 
                     _context.Entry(model).State = EntityState.Modified;

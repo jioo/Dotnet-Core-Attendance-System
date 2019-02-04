@@ -58,14 +58,14 @@ namespace WebApi.Features.Logs
                         .Where(m => m.Deleted == null)
                         .SingleOrDefaultAsync(cancellationToken);
                     
-                    // Check if employee exist
+                    // Check if employee exists
                     if (emp == null) 
-                        return new EmployeeViewModel{ Id = Guid.Empty };
+                        return null;
 
                     // Check if password is correct
                     var user = await _manager.FindByIdAsync(emp.IdentityId);
                     if (!await _manager.CheckPasswordAsync(user, request.ViewModel.Password))
-                        return new EmployeeViewModel{ Id = Guid.Empty };
+                        return null;
 
                     return _mapper.Map<EmployeeViewModel>(emp);
                 }
