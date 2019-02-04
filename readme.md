@@ -48,6 +48,9 @@ cd .\tests\Api\
 
 # Run tests 
 dotnet test
+
+# or Run with file watcher
+dotnet watch test
 ```
 
 ### Local Publish ###
@@ -62,6 +65,7 @@ dotnet-cake build.cake --task="Publish"
 * Swagger for api documentation (URL: http://localhost:5000/swagger/index.html)
 * CQRS Pattern (Command Query Responsibility Segregation)
 * Authentication based on Identity Framework & JWT Bearer
+* Integration Tests with XUnit
 * Material design
 * Realtime update on employee logs
 * ![Realtime Demo](realtime-demo.gif)
