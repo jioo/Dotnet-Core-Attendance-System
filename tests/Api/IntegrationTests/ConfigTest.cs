@@ -1,7 +1,9 @@
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Test.Api.ClassData;
 using Test.Api.Utils;
 using WebApi.Constants;
 using WebApi.Features.Auth;
@@ -53,7 +55,7 @@ namespace Test.Api
             var model = _fixture.Context.Config.First();
             model.TimeIn = "09:30";
             model.TimeOut = "17:15";
-            model.GracePeriod = "5";
+            model.GracePeriod = 5;
 
             // Act
             var response = await _fixture.Client.PutAsJsonAsync(API_URL, model);
@@ -67,6 +69,15 @@ namespace Test.Api
             Assert.Equal(updatedModel.GracePeriod, model.GracePeriod);
         }
 
-        // TODO: Add time validation in `ConfigViewModel`
+        [Theory]
+        [ClassData(typeof(InvalidConfigModels))]
+        public async Task GivenInvalidConfigModels_WhenPutRequest_ThenReutrnBadRequest(ConfigViewModel viewModel)
+        {
+            // Act
+            var response = await _fixture.Client.PutAsJsonAsync(API_URL, viewModel);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
     }
 }
