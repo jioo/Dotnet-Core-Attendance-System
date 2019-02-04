@@ -2,12 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebApi.Features.Accounts
 {
-    public class ChangePasswordViewModel 
+    public class UpdatePasswordViewModel
     {
         [Required]
-        public string OldPassword { get; set; }
+        public string UserName { get; set; }
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
-        public string NewPassword { get; set; }
+        public string Password { get; set; }
     }
 }

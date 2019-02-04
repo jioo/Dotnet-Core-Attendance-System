@@ -25,7 +25,8 @@ namespace WebApi.Features.Auth
         {
             // Check if credentials are correct
             var validate = await _mediator.Send(new ValidatePassword.Query(viewModel.UserName, viewModel.Password));
-            if (!validate) return BadRequest("Invalid username or password");
+            if (!validate) 
+                return BadRequest("Invalid username or password");
 
             // Get User Claims
             var claimsIdentity = await _mediator.Send(new GetRoleClaimsIdentity.Command(viewModel));
@@ -48,9 +49,7 @@ namespace WebApi.Features.Auth
             {
                 var validateRole = _httpContext.HttpContext.User.IsInRole(role);
                 if(!validateRole)
-                {
                     return Forbid();
-                }
             }
 
             return Ok();

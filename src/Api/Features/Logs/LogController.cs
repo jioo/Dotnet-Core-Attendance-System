@@ -46,7 +46,8 @@ namespace WebApi.Features.Logs
         {
             // Validate card no. & password
             var user = await _mediator.Send(new ValidateTimeInOut.Query(viewModel));
-            if (user.Id == Guid.Empty) return BadRequest("Invalid username or password!");
+            if (user.Id == Guid.Empty) 
+                return BadRequest("Invalid username or password!");
 
             // Broadcast to web client
             await _hubContext.Clients.All.SendAsync("employee-logged"); 

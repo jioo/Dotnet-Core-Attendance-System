@@ -41,7 +41,8 @@ namespace WebApi.Features.Employees
             var isCardExist = await _mediator.Send(
                 new IsCardExists.Query(model.Id, model.CardNo)
             );
-            if(isCardExist) return BadRequest("Card No. is already in use");
+            if (isCardExist) 
+                return BadRequest("Card No. is already in use");
 
             // Return update result
             return new OkObjectResult(

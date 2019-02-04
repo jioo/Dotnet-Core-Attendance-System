@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using WebApi.Entities;
 using MediatR;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace WebApi.Features.Accounts
 {
@@ -12,10 +14,12 @@ namespace WebApi.Features.Accounts
     public class AccountsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IHttpContextAccessor _httpContext;
 
-        public AccountsController(IMediator mediator)
+        public AccountsController(IMediator mediator, IHttpContextAccessor httpContext)
         {
             _mediator = mediator;
+            _httpContext = httpContext;
         }
 
         // POST: api/accounts/register
@@ -25,11 +29,13 @@ namespace WebApi.Features.Accounts
         {
             // mediator from Features/Employees
             var isCardExist = await _mediator.Send(new Employees.IsCardExists.Query(Guid.Empty, viewModel.CardNo));
-            if (isCardExist) return BadRequest("Card No. is already in use");
+            if (isCardExist) 
+                return BadRequest("Card No. is already in use");
 
             // mediator from Features/Employees
             var isUsernameExist = await _mediator.Send(new Auth.IsUserExists.Query(viewModel.UserName));
-            if(isUsernameExist) return BadRequest($"Username {viewModel.UserName} is already taken");
+            if (isUsernameExist) 
+                return BadRequest($"Username {viewModel.UserName} is already taken");
 
             // Create user account
             var employeeInfo = await _mediator.Send(new Register.Command(viewModel));
@@ -40,11 +46,12 @@ namespace WebApi.Features.Accounts
         // PUT: api/accounts/update-password
         [Authorize(Roles = "Admin")]
         [HttpPut("update-password")]
-        public async Task<IActionResult> UpdatePassword(ChangePasswordViewModel viewModel)
+        public async Task<IActionResult> UpdatePassword(UpdatePasswordViewModel viewModel)
         {
             // Change a specific Employee account's password
             var result = await _mediator.Send(new UpdatePassword.Command(viewModel));
-            if(!result) return StatusCode(500);
+            if (!result) 
+                return BadRequest();
 
             return Ok();
         }
@@ -54,12 +61,15 @@ namespace WebApi.Features.Accounts
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel viewModel)
         {
             // Check if Old password is correct
-            var validatePassword = await _mediator.Send(new Auth.ValidatePassword.Query(viewModel.UserName, viewModel.OldPassword));
-            if (!validatePassword) return BadRequest("Incorrect password");
+            var currentUser = _httpContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var validatePassword = await _mediator.Send(new Auth.ValidatePassword.Query(currentUser, viewModel.OldPassword));
+            if (!validatePassword) 
+                return BadRequest("Incorrect password");
             
             // Change account password
             var result = await _mediator.Send(new ChangePassword.Command(viewModel));
-            if(!result.Succeeded) return BadRequest("Unable to change password");
+            if (!result.Succeeded) 
+                return BadRequest("Unable to change password");
             
             return Ok();
         }

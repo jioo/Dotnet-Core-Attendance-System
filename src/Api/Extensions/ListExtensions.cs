@@ -7,7 +7,7 @@ namespace WebApi.Extensions
     public static class ListExtensions
     {
         /// <summary>
-        /// 
+        /// Apply sort filters based on parameters
         /// </summary>
         /// <param name="queryable"></param>
         /// <param name="parameters"></param>

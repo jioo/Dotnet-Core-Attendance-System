@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -40,9 +41,7 @@ namespace WebApi.Features.Accounts
                 try
                 {
                     // Get the username in sub type claim
-                    var username = _httpContext.HttpContext.User.Claims
-                        .First(m => m.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
-                        .Value;
+                    var username =  _httpContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                     // Get account details
                     var user = await _manager.FindByNameAsync(username);
@@ -51,7 +50,8 @@ namespace WebApi.Features.Accounts
                     return await _manager.ChangePasswordAsync(
                         user, 
                         request.ViewModel.OldPassword, 
-                        request.ViewModel.NewPassword);
+                        request.ViewModel.NewPassword
+                    );
                 }
                 catch (Exception e)
                 {

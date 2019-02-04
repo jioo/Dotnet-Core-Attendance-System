@@ -28,7 +28,7 @@ namespace WebApi
 			{
 				using (var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>())
 				{
-                    if (!context.Database.CanConnect() && !context.Database.IsInMemory())
+                    if (!context.Database.IsInMemory())
                     {
                         context.Database.Migrate();
                     }

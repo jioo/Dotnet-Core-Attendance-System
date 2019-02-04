@@ -59,7 +59,8 @@ namespace WebApi.Features.Logs
                         .SingleOrDefaultAsync(cancellationToken);
                     
                     // Check if employee exist
-                    if(emp == null) return new EmployeeViewModel{ Id = Guid.Empty };
+                    if (emp == null) 
+                        return new EmployeeViewModel{ Id = Guid.Empty };
 
                     // Check if password is correct
                     var user = await _manager.FindByIdAsync(emp.IdentityId);

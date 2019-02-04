@@ -7,7 +7,7 @@ namespace WebApi.Features.Config
 {
     [Authorize]
     [Route("api/[controller]"), ApiController]
-    public class ConfigController : ControllerBase
+    public class ConfigController : Controller
     {
         private readonly IMediator _mediator;
 
@@ -26,8 +26,12 @@ namespace WebApi.Features.Config
         // PUT api/config
         [Authorize(Roles = "Admin")]
         [HttpPut]
-        public async Task<ConfigViewModel> Update(ConfigViewModel viewModel)
+        public async Task<ActionResult<ConfigViewModel>> Update(ConfigViewModel viewModel)
         {
+            string message;
+            if (Extensions.ValidateTimeStrings(viewModel, out message))
+                return BadRequest(message);
+
             return await _mediator.Send(new Update.Command(viewModel));
         }
     }

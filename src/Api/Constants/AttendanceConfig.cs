@@ -4,7 +4,6 @@ namespace WebApi.Constants
     {
         public const string TimeIn = "09:00";
         public const string TimeOut = "18:00";
-        public const string GracePeriod = "15";
-
+        public const int GracePeriod = 15;
     }
 }
