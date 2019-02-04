@@ -13,7 +13,10 @@ namespace Test.Api.ClassData
             yield return new object[] { HttpMethod.Put, "api/accounts/update-password" };
             yield return new object[] { HttpMethod.Put, "api/config" };
             yield return new object[] { HttpMethod.Get, "api/employee" };
+            yield return new object[] { HttpMethod.Put, "api/employee" };
             yield return new object[] { HttpMethod.Get, $"api/employee/{Guid.NewGuid()}" };
+            yield return new object[] { HttpMethod.Put, "api/log" };
+            yield return new object[] { HttpMethod.Get, $"api/log/{Guid.NewGuid()}" };
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

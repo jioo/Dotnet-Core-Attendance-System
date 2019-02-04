@@ -163,9 +163,9 @@ namespace Test.Api
 
             // Act
             var request = new HttpRequestMessage(HttpMethod.Put, $"{API_URL}/change-password");
-            // Send request as Employee
             request.Content = new StringContent(viewModel, Encoding.UTF8, "application/json");
 
+            // Send request as Employee
             await AuthExtensions.SetupRequestAuth(
                 request, 
                 _fixture, 
