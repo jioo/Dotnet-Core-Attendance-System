@@ -11,6 +11,7 @@ using WebApi.Constants;
 using WebApi.Entities;
 using WebApi.Features.Auth;
 using WebApi.Features.Logs;
+using WebApi.Utils;
 using Xunit;
 
 namespace Test.Api
@@ -39,7 +40,7 @@ namespace Test.Api
             // Act
             var response = await _fixture.Client.GetAsync(API_URL);
             var result = await response.Content.ReadAsStringAsync();
-            var resultModel = JsonConvert.DeserializeObject<LogListResponseModel>(result);
+            var resultModel = JsonConvert.DeserializeObject<ListResponse<LogViewModel>>(result);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -66,7 +67,7 @@ namespace Test.Api
 
             var response = await _fixture.Client.SendAsync(request);
             var result = await response.Content.ReadAsStringAsync();
-            var resultModel = JsonConvert.DeserializeObject<LogListResponseModel>(result);
+            var resultModel = JsonConvert.DeserializeObject<ListResponse<LogViewModel>>(result);
 
             // Assert
             response.EnsureSuccessStatusCode();

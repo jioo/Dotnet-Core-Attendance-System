@@ -18,7 +18,7 @@ namespace Test.Api.Utils
             if (!response.IsSuccessStatusCode) return string.Empty;
             
             var result = await response.Content.ReadAsStringAsync();
-            var resultModel = JsonConvert.DeserializeObject<LoginResponseModel>(result);
+            var resultModel = JsonConvert.DeserializeObject<LoginResponse>(result);
 
             return resultModel.AccessToken;
         }
