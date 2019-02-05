@@ -1,5 +1,6 @@
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -8,19 +9,16 @@ using WebApi.Entities;
 
 namespace WebApi.Features.Accounts
 {
-    /// <summary>
-    /// Change a specific Employee account's password
-    /// </summary>
     public class UpdatePassword
     {
         public class Command : IRequest<bool>
         {
-            public Command(ChangePasswordViewModel viewModel)
+            public Command(UpdatePasswordViewModel viewModel)
             {
                 ViewModel = viewModel;
             }
 
-            public ChangePasswordViewModel ViewModel { get; }
+            public UpdatePasswordViewModel ViewModel { get; }
         }
 
         public class CommandHandler : IRequestHandler<Command, bool>
@@ -36,6 +34,11 @@ namespace WebApi.Features.Accounts
             {
                 try
                 {
+                    // Validate User
+                    var validateUser = _manager.Users.FirstOrDefault(m => m.UserName == request.ViewModel.UserName);
+                    if(validateUser == null)
+                        return false;
+                        
                     // Get account details
                     var user = await _manager.FindByNameAsync(request.ViewModel.UserName);
 
@@ -43,7 +46,7 @@ namespace WebApi.Features.Accounts
                     await _manager.RemovePasswordAsync(user);
 
                     // Add the new password
-                    var result = await _manager.AddPasswordAsync(user, request.ViewModel.NewPassword);
+                    var result = await _manager.AddPasswordAsync(user, request.ViewModel.Password);
 
                     return (result.Succeeded) ? true : false;
                 }

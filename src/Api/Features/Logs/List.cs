@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApi.Entities;
 using WebApi.Extensions;
 using WebApi.Infrastructure;
+using WebApi.Utils;
 using X.PagedList;
 
 namespace WebApi.Features.Logs
@@ -23,7 +24,7 @@ namespace WebApi.Features.Logs
     /// </summary>
     public class List
     {
-        public class Query : IRequest<Object> 
+        public class Query : IRequest<ListResponse<LogViewModel>> 
         { 
             public Query(DateFilteredList parameters)
             {
@@ -33,7 +34,7 @@ namespace WebApi.Features.Logs
             public DateFilteredList Parameters { get; }
         }
 
-        public class QueryHandler : IRequestHandler<Query, Object>
+        public class QueryHandler : IRequestHandler<Query, ListResponse<LogViewModel>>
         {
             private readonly int DEFAULT_PAGE = 1;
             private readonly int DEFAULT_ROWS_PER_PAGE = 10;
@@ -51,7 +52,7 @@ namespace WebApi.Features.Logs
                 _manager = manager;
             }
 
-            public async Task<Object> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<ListResponse<LogViewModel>> Handle(Query request, CancellationToken cancellationToken)
             {
                 try
                 {
@@ -111,10 +112,10 @@ namespace WebApi.Features.Logs
                         .ToPagedList(pageNumber, pageSize)
                         .ToListAsync(cancellationToken);
 
-                    return new 
+                    return new ListResponse<LogViewModel>
                     {
-                        meta = request.Parameters,
-                        data = result
+                        Meta = request.Parameters,
+                        Data = result,
                     };
                 }
                 catch (Exception e)

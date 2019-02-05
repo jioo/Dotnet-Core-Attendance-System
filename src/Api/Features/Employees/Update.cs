@@ -8,13 +8,6 @@ using WebApi.Infrastructure;
 
 namespace WebApi.Features.Employees
 {
-    /// <summary>
-    /// Update existing employee
-    /// </summary>
-    /// <param name="viewModel">view model</param>
-    /// <returns>
-    /// Returns <see cref="EmployeeViewModel"/>
-    /// </returns>
     public class Update
     {
         public class Command : IRequest<EmployeeViewModel>

@@ -8,14 +8,6 @@ using WebApi.Infrastructure;
 
 namespace WebApi.Features.Employees
 {
-    /// <summary>
-    /// Checks if Card No already exist
-    /// </summary>
-    /// <param name="id">id to check for</param>
-    /// <param name="cardNo">card no. to check for</param>
-    /// <returns>
-    /// Returns <see cref="bool"/>
-    /// </returns>
     public class IsCardExists
     {
         public class Query : IRequest<bool>

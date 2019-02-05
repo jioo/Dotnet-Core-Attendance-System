@@ -65,7 +65,7 @@ _axios.interceptors.response.use(
                 break;
 
             default:
-                message = error.response.data || defaultErrorMessage
+                message = error.response.data.error_description || defaultErrorMessage
                 break;
         }
         

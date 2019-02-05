@@ -11,9 +11,6 @@ using AutoMapper;
 
 namespace WebApi.Features.Employees
 {
-    /// <summary>
-    /// List of employees
-    /// </summary>
     public class List
     {
         public class Query : IRequest<IList<EmployeeViewModel>> { }

@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@aspnet/signalr": "^1.1.0",
+    "jwt-decode": "^2.2.0",
     "material-design-icons-iconfont": "^4.0.4",
     "moment": "^2.24.0",
     "roboto-fontface": "^0.10.0",

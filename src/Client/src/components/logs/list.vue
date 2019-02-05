@@ -191,8 +191,8 @@ export default {
                 ]
 
                 if(this.isRole('Employee')) {
-                    const userId = this.currentUser.empId
-                    this.items = this.logs.data.filter(m => m.employeeId === userId)
+                    const empId = this.currentUser.employee_id
+                    this.items = this.logs.data.filter(m => m.employeeId === empId)
                     this.headers = [
                         { text: 'Time In', value: 'timeIn' },
                         { text: 'Time Out', value: 'timeOut' }
@@ -270,7 +270,16 @@ export default {
     },
 
     created () {
+        // connect to websocket
+        BroadcastConnection.start()
+
         this.setDefaultMeta()
-    }
+    },
+
+    // disconnect the websocket before leaving component
+    beforeRouteLeave (to, from, next) {
+        BroadcastConnection.stop()
+        next()
+    },
 }
 </script>   

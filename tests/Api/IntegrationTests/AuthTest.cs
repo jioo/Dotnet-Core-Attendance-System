@@ -133,5 +133,21 @@ namespace Test.Api
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
+        [Theory]
+        [ClassData(typeof(PublicEndpoints))]
+        public async Task GivenPublicEndpoints_WhenRequest_ThenOkOrBadRequest(HttpMethod method, string url)
+        {
+            // Act
+            var request = new HttpRequestMessage(method, url);
+            request.Content = new StringContent("", Encoding.UTF8, "application/json");
+            var response = await _fixture.Client.SendAsync(request);
+
+            // Assert
+            if (method == HttpMethod.Get)
+                response.EnsureSuccessStatusCode();
+            else
+                Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
     }
 }

@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace WebApi.Migrations
+namespace WebApi.Infrastructure.Migrations
 {
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -54,7 +54,7 @@ namespace WebApi.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     TimeIn = table.Column<string>(nullable: true),
                     TimeOut = table.Column<string>(nullable: true),
-                    GracePeriod = table.Column<string>(nullable: true)
+                    GracePeriod = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {

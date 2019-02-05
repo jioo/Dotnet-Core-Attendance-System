@@ -1,8 +1,10 @@
+using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Test.Api.Models
+namespace WebApi.Features.Auth
 {
-    public class LoginResponseModel
+    public class LoginResponse
     {
         [JsonProperty("access_token")]
         public string AccessToken { get; set; }

@@ -13,24 +13,24 @@ namespace WebApi.Features.Auth
 {
     public class GenerateAccessToken
     {
-        public class Command : IRequest<Object>
+        public class Command : IRequest<LoginResponse>
         {
             public Command(
                 ClaimsIdentity claimsIdentity,
                 EmployeeViewModel employee,
-                string uername)
+                string userName)
             {
                 ClaimsIdentity = claimsIdentity;
                 Employee = employee;
-                Uername = uername;
+                UserName = userName;
             }
 
             public ClaimsIdentity ClaimsIdentity { get; }
             public EmployeeViewModel Employee { get; }
-            public string Uername { get; }
+            public string UserName { get; }
         }
 
-        public class CommandHandler : IRequestHandler<Command, Object>
+        public class CommandHandler : IRequestHandler<Command, LoginResponse>
         {
             private readonly JwtIssuerOptions _jwtOptions;
 
@@ -40,26 +40,15 @@ namespace WebApi.Features.Auth
                 Extensions.ThrowIfInvalidOptions(_jwtOptions);
             }
 
-            public async Task<object> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<LoginResponse> Handle(Command request, CancellationToken cancellationToken)
             {
                 try
                 {
-                    var response = new
+                    return new LoginResponse
                     {
-                        user = new
-                        {
-                            empId = (request.Employee.Id != Guid.Empty) ? request.Employee.Id: Guid.Empty,
-                            fullName = request.Employee.FullName,
-                            username = request.Uername,
-                            roles = request.ClaimsIdentity.Claims.Where(c => c.Type == ClaimTypes.Role)
-                                        .Select(c => c.Value)
-                                        .ToList()
-                        },
-                        access_token = await GenerateEncodedToken(request.Uername, request.ClaimsIdentity),
-                        expires_in = (int)_jwtOptions.ValidFor.TotalSeconds
+                        AccessToken = await GenerateEncodedToken(request, request.ClaimsIdentity),
+                        ExpiresIn = (int) _jwtOptions.ValidFor.TotalSeconds
                     };
-
-                    return response;
                 }
                 catch (Exception e)
                 {
@@ -68,11 +57,13 @@ namespace WebApi.Features.Auth
                 }
             }
 
-            public async Task<string> GenerateEncodedToken(string userName, ClaimsIdentity identity)
+            public async Task<string> GenerateEncodedToken(Command request, ClaimsIdentity identity)
             {
                 var claims = new[]
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, userName),
+                    new Claim(JwtRegisteredClaimNames.Sub, request.UserName),
+                    new Claim("full_name", request.Employee.FullName),
+                    new Claim("employee_id", request.Employee.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.JtiGenerator()),
                     new Claim(JwtRegisteredClaimNames.Iat, Extensions.ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
                     identity.FindFirst(ClaimTypes.Role)
@@ -85,7 +76,8 @@ namespace WebApi.Features.Auth
                     claims: claims,
                     notBefore: _jwtOptions.NotBefore,
                     expires: _jwtOptions.Expiration,
-                    signingCredentials: _jwtOptions.SigningCredentials);
+                    signingCredentials: _jwtOptions.SigningCredentials
+                );
 
                 var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 

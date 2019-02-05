@@ -10,7 +10,7 @@
             <v-list dense>
                 <v-list-tile v-if="isAuthenticated">
                     <v-list-tile-content>
-                        <v-list-tile-title>Logged in as <b class="orange--text"> {{ currentUser.fullName }}</b></v-list-tile-title>
+                        <v-list-tile-title>Logged in as <b class="orange--text"> {{ currentUser.full_name }}</b></v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
