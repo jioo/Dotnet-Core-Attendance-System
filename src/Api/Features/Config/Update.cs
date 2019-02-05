@@ -8,9 +8,6 @@ using WebApi.Infrastructure;
 
 namespace WebApi.Features.Config
 {
-    /// <summary>
-    /// Update attendance config
-    /// </summary>
     public class Update
     {
         public class Command : IRequest<ConfigViewModel>

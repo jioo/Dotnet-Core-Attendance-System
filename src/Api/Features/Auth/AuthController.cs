@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using WebApi.Utils;
 
 namespace WebApi.Features.Auth
 {
@@ -19,14 +20,19 @@ namespace WebApi.Features.Auth
         }
 
         // POST api/auth/login
+        /// <summary>
+        /// Login endpoint that produces Json Web Token
+        /// </summary>
+        /// <param name="viewModel"></param>
         [HttpPost("login")]
-        // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel viewModel)
+        [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorHandler), StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<LoginResponse>> Login(LoginViewModel viewModel)
         {
             // Check if credentials are correct
             var validate = await _mediator.Send(new ValidatePassword.Query(viewModel.UserName, viewModel.Password));
             if (!validate) 
-                return BadRequest("Invalid username or password");
+                return BadRequest(new ErrorHandler{ Description = "Invalid username or password." });
 
             // Get User Claims
             var claimsIdentity = await _mediator.Send(new GetRoleClaimsIdentity.Command(viewModel));
@@ -41,8 +47,15 @@ namespace WebApi.Features.Auth
         }
 
         // POST api/challenge/{role}
+        /// <summary>
+        /// Validate the bearer token
+        /// </summary>
+        /// <param name="role"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost("challenge/{role?}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public IActionResult ChallengeAuth(string role)
         {
             if(!string.IsNullOrEmpty(role)) 
@@ -55,13 +68,13 @@ namespace WebApi.Features.Auth
             return Ok();
         }
 
-        // GET api/auth/xsrfToken
-        [HttpGet("xsrfToken")]
-        public IActionResult XsrfToken()
-        {
-            return new OkObjectResult(
-                _mediator.Send(new GenerateXsrfToken.Query(HttpContext))
-            );
-        }
+        // // GET api/auth/xsrfToken
+        // [HttpGet("xsrfToken")]
+        // public IActionResult XsrfToken()
+        // {
+        //     return new OkObjectResult(
+        //         _mediator.Send(new GenerateXsrfToken.Query(HttpContext))
+        //     );
+        // }
     }
 }

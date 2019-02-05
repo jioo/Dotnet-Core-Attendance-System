@@ -13,7 +13,7 @@ namespace WebApi.Features.Auth
 {
     public class GenerateAccessToken
     {
-        public class Command : IRequest<Object>
+        public class Command : IRequest<LoginResponse>
         {
             public Command(
                 ClaimsIdentity claimsIdentity,
@@ -30,7 +30,7 @@ namespace WebApi.Features.Auth
             public string Uername { get; }
         }
 
-        public class CommandHandler : IRequestHandler<Command, Object>
+        public class CommandHandler : IRequestHandler<Command, LoginResponse>
         {
             private readonly JwtIssuerOptions _jwtOptions;
 
@@ -40,26 +40,24 @@ namespace WebApi.Features.Auth
                 Extensions.ThrowIfInvalidOptions(_jwtOptions);
             }
 
-            public async Task<object> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<LoginResponse> Handle(Command request, CancellationToken cancellationToken)
             {
                 try
                 {
-                    var response = new
+                    return new LoginResponse
                     {
-                        user = new
+                        User = new UserDetails
                         {
-                            empId = (request.Employee.Id != Guid.Empty) ? request.Employee.Id: Guid.Empty,
-                            fullName = request.Employee.FullName,
-                            username = request.Uername,
-                            roles = request.ClaimsIdentity.Claims.Where(c => c.Type == ClaimTypes.Role)
-                                        .Select(c => c.Value)
-                                        .ToList()
+                            EmployeeId = (request.Employee.Id != Guid.Empty) ? request.Employee.Id: Guid.Empty,
+                            FullName = request.Employee.FullName,
+                            UserName = request.Uername,
+                            Roles = request.ClaimsIdentity.Claims.Where(c => c.Type == ClaimTypes.Role)
+                                .Select(c => c.Value)
+                                .ToList()
                         },
-                        access_token = await GenerateEncodedToken(request.Uername, request.ClaimsIdentity),
-                        expires_in = (int)_jwtOptions.ValidFor.TotalSeconds
+                        AccessToken = await GenerateEncodedToken(request.Uername, request.ClaimsIdentity),
+                        ExpiresIn = (int) _jwtOptions.ValidFor.TotalSeconds
                     };
-
-                    return response;
                 }
                 catch (Exception e)
                 {

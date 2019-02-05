@@ -9,9 +9,6 @@ using WebApi.Entities;
 
 namespace WebApi.Features.Accounts
 {
-    /// <summary>
-    /// Change a specific Employee account's password
-    /// </summary>
     public class UpdatePassword
     {
         public class Command : IRequest<bool>

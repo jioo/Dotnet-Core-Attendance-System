@@ -9,13 +9,6 @@ using WebApi.Infrastructure;
 
 namespace WebApi.Features.Employees
 {
-    /// <summary>
-    /// Find an employee
-    /// </summary>
-    /// <param name="id">id to search for</param>
-    /// <returns>
-    /// Returns <see cref="EmployeeViewModel"/>
-    /// </returns>
     public class Details
     {
         public class Query : IRequest<EmployeeViewModel>

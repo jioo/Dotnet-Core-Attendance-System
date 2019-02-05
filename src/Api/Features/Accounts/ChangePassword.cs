@@ -10,9 +10,6 @@ using WebApi.Entities;
 
 namespace WebApi.Features.Accounts
 {
-    /// <summary>
-    /// Change account password
-    /// </summary>
     public class ChangePassword
     {
         public class Command : IRequest<IdentityResult>
