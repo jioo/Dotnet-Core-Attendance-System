@@ -112,7 +112,7 @@
                                 label="New Password"
                                 type="Password"
                                 color="orange"
-                                v-model="form.newPassword"
+                                v-model="form.password"
                                 required 
                                 :rules="[required, minLength]"
                                 :disabled="!formStates.form2.isEdit"

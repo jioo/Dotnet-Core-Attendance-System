@@ -79,8 +79,8 @@ export default {
                 await this.$store.dispatch('SET_SETTINGS', defaultSettings)
 
                 // redirect according to role
-                const currentUserRole = result.user.roles
-                if(currentUserRole.includes('Admin')) {
+                const currentUserRole = this.currentUser.roles
+                if(currentUserRole === 'Admin') {
                     this.$router.push({ name: 'employees' })
                 } else {
                     this.$router.push({ name: 'logs' })
