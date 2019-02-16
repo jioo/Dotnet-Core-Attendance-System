@@ -124,8 +124,8 @@ namespace WebApi
                         var gracePeriod = Convert.ToInt32(AttendanceConfig.GracePeriod) * 2;
                         var timeInString = $"{DateTime.Today.ToString("d")} {AttendanceConfig.TimeIn}";
                         var timeOutString = $"{DateTime.Today.ToString("d")} {AttendanceConfig.TimeOut}";
-                        var timeIn = DateTime.ParseExact(timeInString, "MM/dd/yyyy H:mm", null).ToUniversalTime().AddDays(-1);
-                        var timeOut = DateTime.ParseExact(timeOutString, "MM/dd/yyyy H:mm", null).ToUniversalTime().AddDays(-1);
+                        var timeIn = DateTime.Parse(timeInString).ToUniversalTime().AddDays(-1);
+                        var timeOut = DateTime.Parse(timeOutString).ToUniversalTime().AddDays(-1);
 
                         var timeInRange = new DateTime[] { timeIn.AddMinutes(-gracePeriod), timeIn.AddMinutes(gracePeriod) };
                         var timeOutRange = new DateTime[] { timeOut.AddMinutes(-gracePeriod), timeOut.AddMinutes(gracePeriod) };
