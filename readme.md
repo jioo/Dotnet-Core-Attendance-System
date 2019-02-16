@@ -2,15 +2,14 @@
 
 Attendance Web Application using .NET Core (CQRS pattern) & Vue.js
 
-### Circle CI ###
-
-[![CircleCI](https://circleci.com/gh/jioo/Dotnet-Core-Attendance-System.svg?style=svg)](https://circleci.com/gh/jioo/Dotnet-Core-Attendance-System)
+[![CircleCI](https://circleci.com/gh/jioo/Dotnet-Core-Attendance-System.svg?style=svg)](https://circleci.com/gh/jioo/Dotnet-Core-Attendance-System) [![paypal](https://img.shields.io/badge/paypal-donate-green.svg)](http://paypal.me/jjquiazon)
 
 ### Prerequisite ###
 1. Install .Net Core 2.2 SDK [https://dotnet.microsoft.com/download](https://dotnet.microsoft.com/download)
 2. Install Node.js [https://nodejs.org/en/download/](https://nodejs.org/en/download/)
-3. Any relational database provider. See list at: [https://docs.microsoft.com/en-us/ef/core/providers/](https://docs.microsoft.com/en-us/ef/core/providers/)
-    - Note: MSSQL is the default provider in the source code.
+3. Any relational database provider. [https://docs.microsoft.com/en-us/ef/core/providers/](https://docs.microsoft.com/en-us/ef/core/providers/)
+    - Create your database and configure the connection string in [appsettings.json](https://github.com/jioo/Dotnet-Core-Attendance-System/blob/master/src/Api/appsettings.json#L9)
+    - Update DbContext option in [Startup.cs](https://github.com/jioo/Dotnet-Core-Attendance-System/blob/master/src/Api/Startup.cs#L55) _(Skip these if you're using MSSQL)_
 
 ### Build ###
 ```bash
@@ -37,7 +36,7 @@ dotnet watch run
 - Vue client
     - Use login: `admin` and password: `123456`
 ```bash
-cd .\src\Api\
+cd .\src\Client\
 
 # Start dev w/ hot module replacement
 npm run serve
