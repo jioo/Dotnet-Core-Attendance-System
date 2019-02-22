@@ -17,7 +17,7 @@ Attendance Web Application using .NET Core (CQRS pattern) & Vue.js
 dotnet tool install -g Cake.Tool
 
 # Run build.cake
-# - this task build Api & Test .net core project
+# - this task will build Api & Test .net core project
 # and install packages in Vue client
 dotnet-cake build.cake
 ```
