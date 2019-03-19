@@ -13,7 +13,10 @@ Attendance Web Application using .NET Core (CQRS pattern) & Vue.js
 
 ### Build ###
 ```bash
-# Install Cake global tool first
+# Restore packages
+dotnet restore
+
+# Install Cake global
 dotnet tool install -g Cake.Tool
 
 # Run build.cake
