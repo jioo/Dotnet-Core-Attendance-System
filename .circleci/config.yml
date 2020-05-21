@@ -1,22 +1,23 @@
 version: 2.1
+
+orbs:
+ win: circleci/windows@2.2.0
+
 jobs:
   build:
-    branches:
-      only:
-        - master
-    docker:
-      - image: microsoft/dotnet:2.2-sdk
-    steps:
-      - checkout
-      - run:
-          name: Install Cake
-          command: |
-            dotnet tool install -g Cake.Tool
-            echo 'export PATH=$PATH:/root/.dotnet/tools' >> $BASH_ENV
-            source $BASH_ENV
-      - run:
-          name: Build
-          command: dotnet cake build.cake --task="Build project"
-      - run:
-          name: Test
-          command: dotnet cake build.cake --task="Run Test"
+    executor: win/default     
+   
+  steps:
+    - checkout
+    - run:
+        name: Install Cake
+        command: |
+          dotnet tool install -g Cake.Tool
+          echo 'export PATH=$PATH:/root/.dotnet/tools' >> $BASH_ENV
+          source $BASH_ENV
+    - run:
+        name: Build
+        command: dotnet cake build.cake --task="Build project"
+    - run:
+      name: Test
+      command: dotnet cake build.cake --task="Run Test"
