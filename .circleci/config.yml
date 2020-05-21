@@ -6,6 +6,12 @@ orbs:
 jobs:
   build:
     executor: win/default     
+    branches:
+      only:
+        - master
+
+  docker:
+    - image: microsoft/dotnet:2.2-sdk   
    
   steps:
     - checkout
