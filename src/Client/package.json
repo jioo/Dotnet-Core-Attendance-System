@@ -10,7 +10,7 @@
     "@aspnet/signalr": "^1.1.0",
     "jwt-decode": "^2.2.0",
     "material-design-icons-iconfont": "^4.0.4",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "roboto-fontface": "^0.10.0",
     "vee-validate": "^2.1.7",
     "vue": "^2.5.22",
